@@ -79,6 +79,9 @@ vget /camera/[uint]/plane_depth npy
 vget /cameras
     (v0.4.0) List all cameras in the scene
 
+vset /cameras/spawn
+    (v0.4.0) Spawn a new camera
+
 2. Object interaction
 ---------------------
 
