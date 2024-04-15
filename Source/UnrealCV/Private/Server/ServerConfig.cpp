@@ -4,8 +4,8 @@
 #include "Runtime/Core/Public/Misc/ConfigCacheIni.h"
 #include "Runtime/Core/Public/Misc/CommandLine.h"
 #include "Modules/ModuleManager.h"
-#include "AssetRegistryModule.h"
-#include "AssetData.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "AssetRegistry/AssetData.h"
 
 #include "UnrealcvLog.h"
 
