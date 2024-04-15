@@ -5,7 +5,7 @@
 #include "Runtime/Core/Public/Misc/CommandLine.h"
 #include "Modules/ModuleManager.h"
 #include "AssetRegistryModule.h"
-
+#include "AssetData.h"
 
 #include "UnrealcvLog.h"
 

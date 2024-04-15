@@ -15,6 +15,8 @@
 #include "FusionCamSensor.h"
 #include "UnrealcvLog.h"
 #include "WorldController.h"
+#include "Engine/Texture2D.h"
+#include "TextureResource.h"
 
 // TODO: Move features outside blueprint function library.
 

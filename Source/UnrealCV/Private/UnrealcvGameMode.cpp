@@ -4,6 +4,7 @@
 #include "ImageUtils.h"
 #include "UnrealcvServer.h"
 #include "UnrealcvLog.h"
+#include "Components/InputComponent.h"
 
 AUnrealcvGameMode::AUnrealcvGameMode()
 {

@@ -17,6 +17,7 @@
 #include "FusionCameraActor.h"
 
 #include "UnrealcvStats.h"
+#include "UnrealClient.h"
 
 DECLARE_CYCLE_STAT(TEXT("FCameraHandler::GetCameraLit"), STAT_GetCameraLit, STATGROUP_UnrealCV);
 DECLARE_CYCLE_STAT(TEXT("FCameraHandler::SaveData"), STAT_SaveData, STATGROUP_UnrealCV);

@@ -6,7 +6,7 @@
 #include "Runtime/Engine/Classes/Components/MaterialBillboardComponent.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h"
-#include "Runtime/Core/Public/HAL/PlatformFilemanager.h"
+#include "Runtime/Core/Public/HAL/PlatformFileManager.h"
 #include "Runtime/Engine/Classes/Animation/SkeletalMeshActor.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"

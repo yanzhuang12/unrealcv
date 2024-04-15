@@ -7,6 +7,7 @@
 
 #include "UnrealcvStats.h"
 #include "UnrealcvLog.h"
+#include "TextureResource.h"
 
 DECLARE_CYCLE_STAT(TEXT("ResizeReadBufferFast"), STAT_ResizeReadBufferFast, STATGROUP_UnrealCV);
 

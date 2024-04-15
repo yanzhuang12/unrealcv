@@ -1,6 +1,7 @@
 // Weichao Qiu @ 2017
 #include "DepthCamSensor.h"
 #include "AnnotationCamSensor.h"
+#include "TextureResource.h"
 
 UDepthCamSensor::UDepthCamSensor(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer)
