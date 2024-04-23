@@ -1,3 +1,4 @@
+import unrealcv
 from unrealcv import client
 # from docker_util import docker_runner
 import pytest
@@ -21,3 +22,5 @@ def test_viewmode():
         print(cmd)
         res = client.request(cmd)
         assert checker.is_ok(res)
+    client.disconnect()
+    exit()

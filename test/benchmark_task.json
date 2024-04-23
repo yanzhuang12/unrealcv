@@ -7,31 +7,51 @@
     },
     {
       "Cmd": "vget /scene/name",
+      "Duration": 1
+    },
+    {
+      "Cmd": "vget /level/name",
+      "Duration": 1
+    },
+    {
+      "Cmd": "vget /camera/0/location",
       "Duration": 3
     },
     {
       "Cmd": "vget /camera/0/lit test.png",
-      "Duration": 3
+      "Duration": 5
     },
     {
       "Cmd": "vget /camera/0/lit png",
-      "Duration": 3
+      "Duration": 5
     },
     {
-      "Cmd": "vget /camera/0/depth depth.exr",
-      "Duration": 3
+      "Cmd": "vget /camera/0/lit bmp",
+      "Duration": 5
+    },
+    {
+      "Cmd": "vget /camera/0/depth depth.npy",
+      "Duration": 5
     },
     {
       "Cmd": "vget /camera/0/depth npy",
-      "Duration": 3
+      "Duration": 5
     },
     {
       "Cmd": "vget /camera/0/normal normal.png",
-      "Duration": 3
+      "Duration": 5
     },
     {
-      "Cmd": "vget /camera/0/normal npy",
-      "Duration": 3
+      "Cmd": "vget /camera/0/normal bmp",
+      "Duration": 5
+    },
+    {
+      "Cmd": "vget /camera/0/object_mask mask.png",
+      "Duration": 5
+    },
+    {
+      "Cmd": "vget /camera/0/object_mask bmp",
+      "Duration": 5
     }
   ]
 }

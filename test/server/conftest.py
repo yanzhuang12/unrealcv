@@ -8,7 +8,12 @@ from unrealcv import client
 class ResChecker:
     # Define some utility functions to check whether the response is as expected
     def is_error(self, res):
-        return (res is None) or res.startswith('error')
+        if res is None:
+            return True
+        elif type(res) == str:
+            return res.startswith('error')
+        else:  # res is npy array or Bytes
+            return False
 
     def is_ok(self, res):
         return res == 'ok'

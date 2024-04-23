@@ -3,15 +3,14 @@
 from unrealcv import client
 import numpy as np
 import matplotlib.pyplot as plt
-
+from io import BytesIO
 def read_png(res):
-    import StringIO, PIL.Image
-    img = PIL.Image.open(StringIO.StringIO(res))
+    import PIL.Image
+    img = PIL.Image.open(BytesIO(res))
     return np.asarray(img)
 
 def read_npy(res):
-    import StringIO
-    return np.load(StringIO.StringIO(res))
+    return np.load(BytesIO(res))
 
 def request(cmd):
     res = client.request(cmd)

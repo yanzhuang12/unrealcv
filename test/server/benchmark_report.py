@@ -92,13 +92,15 @@ def main():
             count = task.get('Count')
             task_result, sample_output = run_count(task['Cmd'], count)
 
-        sample_output = sample_output.split('\n')[0][:256]
         log(task_text)
         log(task_result)
-        log(sample_output)
+        if type(sample_output) == str:
+            log(sample_output)
         log('-' * 80)
 
     report_file.close()
 
 if __name__ == '__main__':
     main()
+    client.disconnect()
+    exit()
