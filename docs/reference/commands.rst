@@ -64,16 +64,16 @@ vget /camera/[id]/pose
 vset /camera/[id]/pose [x] [y] [z] [pitch] [yaw] [roll]
     (v0.3.10) Teleport camera to location [x, y, z] and rotation [pitch, yaw, roll]
 
-vget /camera/[uint]/horizontal_fieldofview
+vget /camera/[id]/horizontal_fieldofview
     (v0.3.10) Get camera horizontal field of view. This cmd is deprecated, use vget /camera/[uint]/fov instead (v0.4.0).
 
-vset /camera/[uint]/horizontal_fieldofview [FOV]
+vset /camera/[id]/horizontal_fieldofview [FOV]
     (v0.3.10) Set camera horizontal field of view. This cmd is deprecated, use vset /camera/[uint]/fov [FOV] instead (v0.4.0).
 
-vget /camera/[uint]/vis_depth npy
+vget /camera/[id]/vis_depth npy
     (v0.3.10)
 
-vget /camera/[uint]/plane_depth npy
+vget /camera/[id]/plane_depth npy
     (v0.3.10)
 
 vget /cameras
@@ -81,6 +81,18 @@ vget /cameras
 
 vset /cameras/spawn
     (v0.4.0) Spawn a new camera
+
+vset /camera/[id]/size [width] [height]
+    (v0.4.0) Set the size of the camera image
+
+vget /camera/[id]/size
+    (v0.4.0) Get the size of the camera image
+
+vset /camera/[id]/projection_type [type]
+    (v0.4.0) Set the projection type of the camera, type can be perspective or orthographic
+
+vset /camera/[id]/ortho_width [width]
+    (v0.4.0) Set the orthographic width of the camera
 
 2. Object interaction
 ---------------------
@@ -96,11 +108,14 @@ vget /object/[obj_name]/color
 vset /object/[obj_name]/color [r] [g] [b]
     (v0.2) Set the labeling color of an object
 
-vset /object/[str]/show
+vset /object/[obj_name]/show
     (v0.3.10) Show object
 
-vset /object/[str]/hide
+vset /object/[obj_name]/hide
     (v0.3.10) Hide object
+
+vget /object/[obj_name]/mobility
+    (v0.3.10) Get object mobility
 
 vset /objects/spawn [class_name] [obj_name]
     (v0.4.0) Spawn an object with class name and object name. It can also be used to create a new camera, for example:
@@ -116,11 +131,20 @@ vset /object/[obj_name]/name [new_obj_name]
 vget /object/[obj_name]/scale
     (v0.4.0) Get object scale
 
-vset /object/[str]/scale [x] [y] [z]
+vset /object/[obj_name]/scale [x] [y] [z]
     (v0.4.0) Set object scale
 
-vget /object/[str]/bounds
+vset /object/[obj_name]/name [new_obj_name]
+    (v0.4.0) Rename object
+
+vget /object/[obj_name]/uclass_name
+    (v0.4.0) Get UClass name of an object
+
+vget /object/[obj_name]/bounds
     (v0.4.0) Get object bounds in the world coordinate, format is [minx, y, z, maxx, y, z]
+
+vget /object/[obj_name]/vertex_location
+    (v0.4.0) Get the vertex location of an object
 
 3. Plugin commands
 ------------------
@@ -133,6 +157,15 @@ vget /unrealcv/status
 vget /unrealcv/help
     (v0.2) List all available commands and their help message
 
+vget /unrealcv/version
+    (v0.3.10) Get the version of UnrealCV plugin
+
+vget /scene/name
+    (v0.3.10) Get the name of this scene
+
+vget /level/name
+    (v0.3.10) Get the name of the current level
+
 4. Action commands
 ------------------
 
@@ -143,6 +176,12 @@ vset /action/keyboard [key_name] [delta]
 
 vset /action/game/pause
     (v0.3.10) Pause the game
+
+vget /action/game/is_paused
+    (v0.3.10) Check if the game is paused
+
+vset /action/game/resume
+    (v0.3.10) Resume the game
 
 vset /action/game/level [level_name]
     (v0.3.10) Open a new level
