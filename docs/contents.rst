@@ -13,8 +13,9 @@ Table of Contents
     :titlesonly:
 
     tutorials/getting_started
-    tutorials/generate_images_tutorial
+    tutorials/python_client
     tutorials/examples
+    tutorials/generate_images_tutorial
 
 .. toctree::
     :includehidden:
