@@ -1,5 +1,6 @@
 // Weichao Qiu @ 2016
 #include "ExecStatus.h"
+#include "Runtime/Launch/Resources/Version.h"
 #if ENGINE_MAJOR_VERSION >= 5
 #include "Runtime/Core/Public/Containers/StringConv.h"
 #endif

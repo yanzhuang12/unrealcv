@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Classes/Engine/GameViewportClient.h"
 #include "Runtime/Engine/Classes/GameFramework/Controller.h"
+#include "Misc/Paths.h"
 
 #include "CommandDispatcher.h"
 #include "FusionCamSensor.h"

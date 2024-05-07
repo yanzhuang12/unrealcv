@@ -3,6 +3,7 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Runtime/Engine/Classes/GameFramework/Pawn.h"
 
 #include "WorldController.h"
 #include "VisionBPLib.h"
@@ -91,7 +92,7 @@ FExecStatus FActionHandler::OpenLevel(const TArray<FString>& Args)
 FExecStatus FActionHandler::EnableInput(const TArray<FString>& Args)
 {
 	APawn* Pawn = FUnrealcvServer::Get().GetPawn();
-	if (IsValid(Pawn))
+	if (!IsValid(Pawn))
 	{
 		UVisionBPLib::UpdateInput(Pawn, true);
 		return FExecStatus::OK();

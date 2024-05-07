@@ -6,6 +6,7 @@
 #include "Runtime/Engine/Public/SkeletalRenderPublic.h"
 #include "Runtime/Launch/Resources/Version.h"
 #include "Runtime/Core/Public/Misc/FileHelper.h"
+#include "Runtime/Engine/Classes/GameFramework/Pawn.h"
 
 #include "ImageUtil.h"
 #include "UnrealcvServer.h"
@@ -350,7 +351,7 @@ TArray<FVector> UVisionBPLib::GetVertexArrayFromMeshComponent(UMeshComponent* Me
 UFusionCamSensor* UVisionBPLib::GetPlayerSensor()
 {
 	APawn* Pawn = FUnrealcvServer::Get().GetPawn();
-	if (!IsValid(Pawn)) return nullptr;
+    if (!IsValid(Pawn)) return nullptr;
 
 	UActorComponent* ActorComponent = Pawn->GetComponentByClass(UFusionCamSensor::StaticClass());
 	UFusionCamSensor* CamSensor = Cast<UFusionCamSensor>(ActorComponent);

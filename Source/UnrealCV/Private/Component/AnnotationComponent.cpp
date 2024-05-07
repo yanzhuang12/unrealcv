@@ -2,6 +2,7 @@
 // Overwrite the material
 
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "Runtime/Engine/Classes/Materials/Material.h"
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/Engine/Classes/Engine/StaticMesh.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
@@ -268,10 +269,16 @@ UAnnotationComponent::UAnnotationComponent(const FObjectInitializer& ObjectIniti
 	bSkeletalMesh = false;
 	FString MaterialPath = TEXT("Material'/UnrealCV/AnnotationColor.AnnotationColor'");
 	static ConstructorHelpers::FObjectFinder<UMaterial> AnnotationMaterialObject(*MaterialPath);
-	AnnotationMaterial = AnnotationMaterialObject.Object;
-	// ParentMeshInfo = MakeShareable(new FParentMeshInfo(nullptr)); 
+	if (AnnotationMaterialObject.Object == nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Annotation material is not valid."));
+    }
+    else
+    {
+        AnnotationMaterial = AnnotationMaterialObject.Object;
+	}
+	// ParentMeshInfo = MakeShareable(new FParentMeshInfo(nullptr));
 	// This will be invalid until attached to a MeshComponent
-
 	this->PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -416,7 +423,7 @@ FPrimitiveSceneProxy* UAnnotationComponent::CreateSceneProxy()
 		LOG1(FString::Printf(TEXT("The type of ParentMeshComponent : %s can not be supported."), *ParentComponent->GetClass()->GetName()));
 		return nullptr;
 	}
-	return nullptr;
+	// return nullptr;
 }
 
 FBoxSphereBounds UAnnotationComponent::CalcBounds(const FTransform & LocalToWorld) const
