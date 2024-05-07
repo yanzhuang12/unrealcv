@@ -3,7 +3,6 @@
 
 #include "SerializeBPLib.h"
 #include "Runtime/Engine/Classes/Kismet/BlueprintFunctionLibrary.h"
-#include "DDSLoader.h"
 #include "VisionBPLib.generated.h"
 
 UENUM(BlueprintType)
