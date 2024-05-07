@@ -377,7 +377,7 @@ FExecStatus FAliasHandler::VExec(const TArray<FString>& Args)
 	// check(Cmd == TEXT("SetRotation 30 30 30"));
 
 	// An example command is vexec RoboArmController_C_0 30 0 0
-	check(Obj->IsPendingKillOrUnreachable() == false);
+	check(IsValid(Obj) && !Obj->IsUnreachable());
 	EObjectFlags Flags = Obj->GetFlags();
 
 	// From Actor.cpp ProcessEvent

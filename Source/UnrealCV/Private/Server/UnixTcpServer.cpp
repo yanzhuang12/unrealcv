@@ -192,7 +192,7 @@ bool FUnixSocketMessageHeader::WrapAndSendPayloadUDS(const TArray<uint8>& Payloa
 
 		if (AmountActuallySent == -1)
 		{
-			UE_LOG(LogUnrealCV, Error, TEXT("Unsuccessful send %s"), strerror(errno));
+			UE_LOG(LogUnrealCV, Error, TEXT("Unsuccessful send %hs"), strerror(errno));
 			close(fd);
 			return false;
 		}
@@ -256,7 +256,7 @@ bool UnixSocketReceiveAllUDS(int fd, uint8* Result, int32 ExpectedSize)
 		}
 		else
 		{
-			UE_LOG(LogUnrealCV, Error, TEXT("Server socket failed to read: %s"), strerror(errno));
+			UE_LOG(LogUnrealCV, Error, TEXT("Server socket failed to read: %hs"), strerror(errno));
 			close(fd);
 			return false;
 
