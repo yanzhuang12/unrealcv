@@ -119,12 +119,12 @@ TArray<FKeypoint> UKeypointComponent::LoadKeypointFromJson()
 	for (TSharedPtr<FJsonValue>& JsonValue : JsonArray)
 	{
 		const TSharedPtr<FJsonObject> JsonObject = JsonValue->AsObject();
-		double X = JsonObject->GetNumberField("x");
-		double Y = JsonObject->GetNumberField("y");
-		double Z = JsonObject->GetNumberField("z");
+		double X = JsonObject->GetNumberField(TEXT("x"));
+		double Y = JsonObject->GetNumberField(TEXT("y"));
+		double Z = JsonObject->GetNumberField(TEXT("z"));
 		FKeypoint Point;
 		Point.Location = FVector(X, Y, Z);
-		Point.Name = JsonObject->GetStringField("name");
+		Point.Name = JsonObject->GetStringField(TEXT("name"));
 		Points.Add(Point);
 	}
 	return Points;

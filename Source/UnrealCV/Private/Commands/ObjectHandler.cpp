@@ -16,8 +16,9 @@
 
 FExecStatus SetActorName(AActor* Actor, FString NewName)
 {
-	UObject* NameScopeOuter = ANY_PACKAGE;
-	UObject* ExistingObject = StaticFindObject(/*Class=*/ NULL, NameScopeOuter, *NewName, true);
+	// UObject* NameScopeOuter = ANY_PACKAGE;
+	// UObject* ExistingObject = StaticFindObject(/*Class=*/ NULL, NameScopeOuter, *NewName, true);
+	UObject* ExistingObject = FindFirstObjectSafe<UObject>(*NewName);
 	if (IsValid(ExistingObject))
 	{
 		if (ExistingObject == Actor)
@@ -377,7 +378,7 @@ FExecStatus FObjectHandler::Spawn(const TArray<FString>& Args)
 		UClassName = Args[0]; 
 	}
 	// Lookup UClass with a string
-	UClass*	Class = FindObject<UClass>(ANY_PACKAGE, *UClassName);
+	UClass*	Class = FindFirstObjectSafe<UClass>(*UClassName);
 
 	if (!IsValid(Class))
 	{
