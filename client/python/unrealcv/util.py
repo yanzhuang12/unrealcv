@@ -99,3 +99,12 @@ def time_it(func):
         print(f"{func.__name__} executed in {execution_time:.4f} seconds")
         return result
     return wrapper
+
+def parse_resolution(res):  # parse the resolution string
+    resolution = res.split('x')
+    if len(resolution) != 2:
+        parser.error('Resolution must be specified as WIDTHxHEIGHT')
+    try:
+        return (int(resolution[0]), int(resolution[1]))
+    except ValueError:
+        parser.error('WIDTH and HEIGHT must be integers')
