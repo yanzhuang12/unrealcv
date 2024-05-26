@@ -14,7 +14,7 @@ import warnings
 "APIs for UnrealCV, a toolkit for using Unreal Engine (UE) in Python."
 
 class UnrealCv_API(object):
-    def __init__(self, port, ip, env, resolution, mode='tcp'):
+    def __init__(self, port, ip, resolution, mode='tcp'):
         # if ip == '127.0.0.1':
         #     self.docker = False
         # else:
@@ -101,6 +101,8 @@ class UnrealCv_API(object):
         # cmds = [cmd1, cmd2, ...]
         # decoder is a list of decoder functions
         res_list = self.client.request(cmds)
+        if decoders is None: # vset commands do not decode return
+            return res_list
         for i, res in enumerate(res_list):
             res_list[i] = decoders[i](res, **kwargs)
         return res_list
@@ -541,6 +543,15 @@ class UnrealCv_API(object):
             res = self.client.request(cmd)
         return self.decoder.decode_vertex(res)
 
+    def get_obj_uclass(self, obj, return_cmd=False):
+        cmd = f'vget /object/{obj}/uclass_name'
+        if return_cmd:
+            return cmd
+        res = None
+        while res is None:
+            res = self.client.request(cmd)
+        return res
+
     def set_map(self, map_name, return_cmd=False):  # change to a new level map
         cmd = f'vset /action/game/level {map_name}'
         if return_cmd:
@@ -548,6 +559,22 @@ class UnrealCv_API(object):
         res = self.client.request(cmd)
         if self.checker.not_error(res):
             self.init_map()
+
+    def set_pause(self, return_cmd=False):
+        cmd = f'vset /action/game/pause'
+        if return_cmd:
+            return cmd
+        self.client.request(cmd)
+
+    def set_resume(self, return_cmd=False):
+        cmd = f'vset /action/game/resume'
+        if return_cmd:
+            return cmd
+        self.client.request(cmd)
+
+    def get_is_paused(self):
+        res = self.client.request('vget /action/game/is_paused')
+        return res == 'true'
 
     def set_global_time_dilation(self, time_dilation, return_cmd=False):
         cmd = f'vrun slomo {time_dilation}'
@@ -640,3 +667,6 @@ class MsgDecoder(object):
         if inverse:
             depth = 1/depth
         return depth
+
+    def empty(self, res):
+        return res
