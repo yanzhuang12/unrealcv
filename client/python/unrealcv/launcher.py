@@ -24,7 +24,7 @@ class RunUnreal():
         assert os.path.exists(self.path2binary), \
             'Please load env binary in UnrealEnv and Check the env_bin in setting file!'
 
-    def start(self, docker, resolution=(160, 160), display=None, opengl=False, offscreen=False,
+    def start(self, docker=False, resolution=(160, 160), display=None, opengl=False, offscreen=False,
               nullrhi=False, gpu_id=None, local_host=True, sleep_time=5):
         port = self.read_port()
         self.write_resolution(resolution)
@@ -150,7 +150,6 @@ class RunUnreal():
                 sock.connect((ip, port))
         except Exception as e:
             sock.close()
-            warnings.warn(e)  # print error message
             return False
         sock.close()
         return True
