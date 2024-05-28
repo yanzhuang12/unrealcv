@@ -164,8 +164,8 @@ class UnrealCv_API(object):
         # mode : {'bmp', 'npy', 'png'}
         # inverse : whether to inverse the depth
         cmds = [self.get_image(cam_id, viewmode, mode, return_cmd=True) for cam_id in cam_ids]
-        decoders = [self.decoder.decode_img for _ in cam_ids]
-        img_list = self.batch_cmd(cmds, decoders, inverse=inverse)
+        decoders = [self.decoder.decode_img for i in cam_ids]
+        img_list = self.batch_cmd(cmds, decoders, mode=mode, inverse=inverse)
         return img_list
 
     def get_image_multimodal(self, cam_id, viewmodes=['lit', 'depth'], modes=['bmp', 'npy']): # get rgb and depth image
