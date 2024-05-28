@@ -158,15 +158,23 @@ class UnrealCv_API(object):
             cv2.waitKey(10)
         return depth
 
-    def get_image_mc(self, cam_ids, viewmode='lit', mode='bmp', inverse=True):
+    def get_image_multicam(self, cam_ids, viewmode='lit', mode='bmp', inverse=True):
         # get image from multiple cameras with the same viewmode
         # viewmode : {'lit', 'depth', 'normal', 'object_mask'}
         # mode : {'bmp', 'npy', 'png'}
         # inverse : whether to inverse the depth
         cmds = [self.get_image(cam_id, viewmode, mode, return_cmd=True) for cam_id in cam_ids]
         decoders = [self.decoder.decode_img for _ in cam_ids]
-        img_list = self.client.cmd_batch(cmds, decoders, inverse=inverse)
+        img_list = self.batch_cmd(cmds, decoders, inverse=inverse)
         return img_list
+
+    def get_image_multimodal(self, cam_id, viewmodes=['lit', 'depth'], modes=['bmp', 'npy']): # get rgb and depth image
+        # default is to get RGB-D image
+        cmds = [self.get_image(cam_id, viewmode, mode, return_cmd=True) for viewmode, mode in zip(viewmodes, modes)]
+        decoders = [self.decoder.decode_map[mode] for mode in modes]
+        res = self.batch_cmd(cmds, decoders)
+        concat_img = np.concatenate(res, axis=2)
+        return concat_img
 
     def get_img_batch(self, cam_info):
         # get image from multiple cameras with the same viewmode
@@ -191,11 +199,6 @@ class UnrealCv_API(object):
                 cam_info[cam_id][viewmode]['img'] = self.decoder.decode_img(res_list.pop(0), mode, inverse)
         return cam_info
 
-    def get_rgbd(self, cam_id, mode): # get rgb and depth image
-        rgb = self.get_image(cam_id, 'lit', mode)
-        depth = self.get_depth(cam_id)
-        rgbd = np.append(rgb, depth, axis=2)
-        return rgbd
 
     def set_cam_pose(self, cam_id, pose):  # set camera pose, pose = [x, y, z, pitch, yaw, roll]
         [x, y, z, roll, yaw, pitch] = pose
@@ -238,12 +241,10 @@ class UnrealCv_API(object):
         self.client.request(cmd, -1)
         self.cam[cam_id]['location'] = loc
 
-    def get_cam_location(self, cam_id, mode='hard', return_cmd=False, syns=True):
+    def get_cam_location(self, cam_id, newest=True, return_cmd=False, syns=True):
         # get camera location, loc=[x,y,z]
         # hard mode will get location from unrealcv, soft mode will get location from self.cam
-        if mode == 'soft':
-            return self.cam[cam_id]['location']
-        if mode == 'hard':
+        if newest:
             cmd = f'vget /camera/{cam_id}/location'
             if return_cmd:
                 return cmd
@@ -253,6 +254,8 @@ class UnrealCv_API(object):
             res = self.decoder.string2floats(res)
             if syns:
                 self.cam[cam_id]['location'] = res
+        else:
+            return self.cam[cam_id]['location']
         return res
 
     def set_cam_rotation(self, cam_id, rot, rpy=False):  # set camera rotation, rot = [roll, yaw, pitch]
@@ -264,12 +267,10 @@ class UnrealCv_API(object):
         self.client.request(cmd, -1)
         self.cam[cam_id]['rotation'] = [pitch, yaw, roll]
 
-    def get_cam_rotation(self, cam_id, mode='hard', return_cmd=False, syns=True):
+    def get_cam_rotation(self, cam_id, newest=True, return_cmd=False, syns=True):
         # get camera rotation, rot = [pitch, yaw, roll]
-        # hard mode will get rotation from unrealcv, soft mode will get rotation from self.cam
-        if mode == 'soft':
-            return self.cam[cam_id]['rotation']
-        if mode == 'hard':
+        # newest mode will get rotation from unrealcv, if not will get rotation from self.cam
+        if newest:
             cmd = f'vget /camera/{cam_id}/rotation'
             if return_cmd:
                 return cmd
@@ -280,30 +281,38 @@ class UnrealCv_API(object):
             if syns:
                 self.cam[cam_id]['rotation'] = res
             return res
+        else:
+            return self.cam[cam_id]['rotation']
 
-    def moveto(self, cam_id, loc):  # move camera to location with physics simulation
+    def move_cam(self, cam_id, loc):  # move camera to location with physics simulation
         [x, y, z] = loc
         cmd = f'vset /camera/{cam_id}/moveto {x} {y} {z}'
         self.client.request(cmd)
 
-    def move_2d(self, cam_id, angle, length, height=0, pitch=0):
-        # move camera in 2d plane as a mobile robot
-        # angle is the angle between camera and x axis
-        # length is the distance between camera and target point
-        yaw_exp = (self.cam[cam_id]['rotation'][1] + angle) % 360
+    def move_cam_forward(self, cam_id, yaw, distance, height=0, pitch=0):
+        # move camera as a mobile robot
+        # yaw is the delta angle between camera and x axis
+        # distance is the absolute distance from the initial location to the target location
+        # return the collision information
+        yaw_exp = (self.cam[cam_id]['rotation'][1] + yaw) % 360
         pitch_exp = (self.cam[cam_id]['rotation'][0] + pitch) % 360
-        delt_x = length * math.cos(yaw_exp / 180.0 * math.pi)
-        delt_y = length * math.sin(yaw_exp / 180.0 * math.pi)
+        assert abs(height) < distance, 'height should be smaller than distance'
+        if height != 0:
+            distance_plane = np.sqrt(distance**2 - height**2)
+        else:
+            distance_plane = distance
+        delt_x = distance_plane * math.cos(yaw_exp / 180.0 * math.pi)
+        delt_y = distance_plane * math.sin(yaw_exp / 180.0 * math.pi)
 
-        location_now = self.cam[cam_id]['location']
+        location_now = self.get_cam_location(cam_id)
         location_exp = [location_now[0] + delt_x, location_now[1]+delt_y, location_now[2]+height]
 
-        self.moveto(cam_id, location_exp)
-        if angle != 0 or pitch != 0:
+        self.move_cam(cam_id, location_exp)
+        if yaw != 0 or pitch != 0:
             self.set_cam_rotation(cam_id, [0, yaw_exp, pitch_exp])
 
         location_now = self.get_cam_location(cam_id)
-        error = self.get_distance(location_now, location_exp, 2)
+        error = self.get_distance(location_now, location_exp, 3)
 
         if error < 10:
             return False
@@ -458,7 +467,8 @@ class UnrealCv_API(object):
             return cmd
         res = None
         while res is None:
-            res = self.client.request(f'vget /object/{obj}/scale')
+            res = self.client.request(cmd)
+        print(obj, res)
         return self.decoder.string2floats(res)  # [scale_x, scale_y, scale_z]
 
     def set_obj_scale(self, obj, scale=[1, 1, 1], return_cmd=False):
@@ -623,6 +633,21 @@ class MsgDecoder(object):
         color = [int(i) for i in object_rgba]  # [r,g,b,a]
         return color[:-1]  # [r,g,b]
 
+    def string2vector(self, res):  # decode vector
+        res = re.findall(r"[+-]?\d+\.?\d*", res)
+        vector = [float(i) for i in res]
+        return vector
+
+    def bpstring2floats(self, res):  # decode number
+        valuse = re.findall(r'"([\d]+\.?\d*)"', res)
+        if len(valuse) == 1:
+            return float(valuse[0])
+        else:
+            return [float(i) for i in valuse]
+    def bpvector2floats(self, res):  # decode number
+        values = re.findall(r'([XYZ]=\d+\.\d+)', res)
+        return [[float(i) for i in value] for value in values]
+
     def decode_vertex(self, res):  # decode vertex
         # input: string
         # output: list of list of floats
@@ -655,9 +680,11 @@ class MsgDecoder(object):
 
     def decode_npy(self, res):  # decode npy image
         img = np.load(BytesIO(res))
+        if len(img.shape) == 2:
+            img = np.expand_dims(img, axis=-1)
         return img
 
-    def decode_depth(self, res, inverse=False, bytesio=False):  # decode depth image
+    def decode_depth(self, res, inverse=False, bytesio=True):  # decode depth image
         if bytesio:
             depth = np.load(BytesIO(res))
         else:
@@ -666,7 +693,7 @@ class MsgDecoder(object):
             depth = depth.reshape(self.resolution[1], self.resolution[0], 1)
         if inverse:
             depth = 1/depth
-        return depth
+        return np.expand_dims(depth, axis=-1)
 
     def empty(self, res):
         return res
