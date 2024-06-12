@@ -33,7 +33,7 @@ struct FKeypoint
 };
 
 UCLASS(meta = (BlueprintSpawnableComponent))
-class UKeypointComponent : public USceneComponent
+class UNREALCV_API UKeypointComponent : public USceneComponent
 {
 	GENERATED_BODY()
 

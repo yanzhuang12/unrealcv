@@ -27,7 +27,7 @@ TArray<UFusionCamSensor*> USensorBPLib::GetFusionSensorList()
 	TArray<UObject*> UObjectList;
 	bool bIncludeDerivedClasses = false;
 	EObjectFlags ExclusionFlags = EObjectFlags::RF_ClassDefaultObject;
-	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
+	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
 	GetObjectsOfClass(UFusionCamSensor::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags, ExclusionInternalFlags);
 
 	// Filter out objects not belong to the game world (editor world for example)

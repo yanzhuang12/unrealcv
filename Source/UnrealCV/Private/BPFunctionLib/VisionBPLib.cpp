@@ -141,7 +141,7 @@ void UVisionBPLib::SaveNpy(const TArray<float>& FloatData, int Width, int Height
 }
 
 void UVisionBPLib::GetBoneTransform(
-	const USkeletalMeshComponent* SkeletalMeshComponent,
+	USkeletalMeshComponent* SkeletalMeshComponent,
 	const TArray<FString>& IncludedBones,
 	TArray<FString>& BoneNames,
 	TArray<FTransform>& BoneTransforms,
@@ -167,7 +167,7 @@ void UVisionBPLib::GetBoneTransform(
 }
 
 void UVisionBPLib::GetBoneTransformJson(
-	const USkeletalMeshComponent* SkeletalMeshComponent,
+	USkeletalMeshComponent* SkeletalMeshComponent,
 	const TArray<FString>& IncludedBones,
 	TArray<FString>& BoneNames,
 	TArray<FJsonObjectBP>& BoneTransformsJson,
@@ -224,7 +224,7 @@ void UVisionBPLib::GetActorList(TArray<AActor*>& ActorList)
 	TArray<UObject*> UObjectList;
 	bool bIncludeDerivedClasses = true;
 	EObjectFlags ExclusionFlags = EObjectFlags::RF_ClassDefaultObject;
-	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
+	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
 	GetObjectsOfClass(AActor::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags, ExclusionInternalFlags);
 
 	for (UObject* ActorObject : UObjectList)

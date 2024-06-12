@@ -3,7 +3,7 @@
 
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 
-class FActorController
+class UNREALCV_API FActorController
 {
 public:
 	FActorController(AActor* InActor);

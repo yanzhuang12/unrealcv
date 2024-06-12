@@ -70,7 +70,7 @@ void UAnnotationCamSensor::GetAnnotationComponents(UWorld* World, TArray<TWeakOb
 	TArray<UObject*> UObjectList;
 	bool bIncludeDerivedClasses = false;
 	EObjectFlags ExclusionFlags = EObjectFlags::RF_ClassDefaultObject;
-	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
+	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
 	GetObjectsOfClass(UAnnotationComponent::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags, ExclusionInternalFlags);
 
 	for (UObject* Object : UObjectList)

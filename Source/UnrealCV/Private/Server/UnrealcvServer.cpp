@@ -127,18 +127,22 @@ UWorld* FUnrealcvServer::GetWorld()
 		{
 			WorldPtr = EditorEngine->GetEditorWorldContext().World();
 		}
-	} // else game mode in editor
-#else
-	UGameEngine* GameEngine = Cast<UGameEngine>(GEngine);
-	if (IsValid(GameEngine))
-	{
-		WorldPtr = GameEngine->GetGameWorld(); // Not GetWorld !
-	}
-	else
-	{
-		UE_LOG(LogUnrealCV, Error, TEXT("GameEngine is invalid"));
-	}
+	} // else standalone game mode in editor
 #endif
+
+	if (!IsValid(WorldPtr))
+	{
+		UGameEngine* GameEngine = Cast<UGameEngine>(GEngine);
+		if (IsValid(GameEngine))
+		{
+			WorldPtr = GameEngine->GetGameWorld(); // Not GetWorld !
+		}
+		else
+		{
+			UE_LOG(LogUnrealCV, Error, TEXT("GameEngine is invalid"));
+		}
+
+	}
 
 	if (IsValid(WorldPtr))
 	{

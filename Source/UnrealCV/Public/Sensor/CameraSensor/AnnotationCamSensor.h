@@ -6,7 +6,7 @@
 
 /** Annotation sensor, utilize the UAnnnotationComponent */
 UCLASS(meta = (BlueprintSpawnableComponent))
-class UAnnotationCamSensor : public UBaseCameraSensor
+class UNREALCV_API UAnnotationCamSensor : public UBaseCameraSensor
 {
 	GENERATED_BODY()
 

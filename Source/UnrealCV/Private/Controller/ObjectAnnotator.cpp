@@ -134,22 +134,26 @@ void FObjectAnnotator::CreateAnnotationComponent(AActor* Actor, const FColor& An
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Annotate actor %s with color %s"), *Actor->GetName(), *AnnotationColor.ToString());
-	// UE_LOG(LogTemp, Log, TEXT("Annotate actor %s with color %s"), *Actor->GetName(), *AnnotationColor.ToString());
 	TArray<UActorComponent*> MeshComponents = Actor->K2_GetComponentsByClass(UMeshComponent::StaticClass());
-	for (UActorComponent* Component : MeshComponents)
+	if (MeshComponents.Num() > 0)
 	{
-		UMeshComponent* MeshComponent = Cast<UMeshComponent>(Component);
+		UE_LOG(LogTemp, Log, TEXT("Annotate actor %s (%s) with color %s"), *Actor->GetActorNameOrLabel(), *Actor->GetName(), *AnnotationColor.ToString());
 
-		UAnnotationComponent* AnnotationComponent = NewObject<UAnnotationComponent>(MeshComponent);
-		// UE_LOG(LogTemp, Log, TEXT("Annotate %s with color %s"), *MeshComponent->GetName(), *AnnotationColor.ToString());
-		AnnotationComponent->SetupAttachment(MeshComponent);
-		AnnotationComponent->RegisterComponent();
-		// Set annotation color after the component is registered
-		AnnotationComponent->SetAnnotationColor(AnnotationColor); 
-		AnnotationComponent->MarkRenderStateDirty();
+		for (UActorComponent* Component : MeshComponents)
+		{
+			UMeshComponent* MeshComponent = Cast<UMeshComponent>(Component);
+
+			UAnnotationComponent* AnnotationComponent = NewObject<UAnnotationComponent>(MeshComponent);
+			// UE_LOG(LogTemp, Log, TEXT("Annotate %s with color %s"), *MeshComponent->GetName(), *AnnotationColor.ToString());
+			AnnotationComponent->SetupAttachment(MeshComponent);
+			AnnotationComponent->RegisterComponent();
+			// Set annotation color after the component is registered
+			AnnotationComponent->SetAnnotationColor(AnnotationColor);
+			AnnotationComponent->MarkRenderStateDirty();
+		}
 	}
 }
+
 
 void FObjectAnnotator::UpdateAnnotationComponent(AActor* Actor, const FColor& AnnotationColor)
 {

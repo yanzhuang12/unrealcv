@@ -205,7 +205,7 @@ FExecStatus FAliasHandler::VExecWithOutput(const TArray<FString>& Args)
 			{
 				bFoundDefault = true;
 
-				const TCHAR* Result = It->ImportText( *PropertyDefaultValue, It->ContainerPtrToValuePtr<uint8>(Parms), ExportFlags, NULL );
+				const TCHAR* Result = It->ImportText_Direct( *PropertyDefaultValue, It->ContainerPtrToValuePtr<uint8>(Parms), nullptr, ExportFlags);
 				bFailedImport = (Result == nullptr);
 			}
 		}
@@ -223,7 +223,7 @@ FExecStatus FAliasHandler::VExecWithOutput(const TArray<FString>& Args)
 				ArgStr = FString(RemainingStr).TrimStart(); // New API
 			}
 
-			const TCHAR* Result = It->ImportText(*ArgStr, It->ContainerPtrToValuePtr<uint8>(Parms), ExportFlags, NULL );
+			const TCHAR* Result = It->ImportText_Direct(*ArgStr, It->ContainerPtrToValuePtr<uint8>(Parms), nullptr, ExportFlags);
 			bFailedImport = (Result == nullptr);
 		}
 

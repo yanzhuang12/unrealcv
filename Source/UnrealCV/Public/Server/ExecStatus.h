@@ -8,7 +8,7 @@ DECLARE_DELEGATE_RetVal(FExecStatus, FPromiseDelegate); // Check task status
 /**
  * Return by async task, used to check status to see whether the task is finished.
  */
-class FPromise
+class UNREALCV_API FPromise
 {
 private:
 	/** The method to check whether this promise is alreay completed */

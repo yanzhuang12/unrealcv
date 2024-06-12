@@ -116,8 +116,7 @@ void UBaseCameraSensor::Capture(TArray<FColor>& ImageData, int& Width, int& Heig
 	if (!CheckTextureTarget()) return;
 	this->CaptureScene();
 
-	UTextureRenderTarget2D* RenderTarget = this->TextureTarget;
-	ReadTextureRenderTarget(RenderTarget, ImageData, Width, Height);
+	ReadTextureRenderTarget(TextureTarget, ImageData, Width, Height);
 }
 
 void UBaseCameraSensor::SetPostProcessMaterial(UMaterial* PostProcessMaterial)

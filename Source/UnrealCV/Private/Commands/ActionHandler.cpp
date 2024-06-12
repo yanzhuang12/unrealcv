@@ -1,6 +1,7 @@
 #include "ActionHandler.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+#include "Runtime/Engine/Classes/GameFramework/PlayerInput.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Runtime/Engine/Classes/GameFramework/Pawn.h"
@@ -139,9 +140,10 @@ FExecStatus FActionHandler::SetStereoDistance(const TArray<FString>& Args)
 /** Return a TFunction to Release the Keyboard */
 TFunction<void(void)> FActionHandler::GetReleaseKey(FKey Key)
 {
-	UWorld* World = this->GetWorld();
+	const UWorld* World = this->GetWorld();
 	return [=]() {
-		World->GetFirstPlayerController()->InputKey(Key, EInputEvent::IE_Released, 0, false);
+		FInputKeyParams KeyParams(Key, EInputEvent::IE_Released, 0, false);
+		World->GetFirstPlayerController()->InputKey(KeyParams);
 	};
 }
 
@@ -166,7 +168,8 @@ FExecStatus FActionHandler::Keyboard(const TArray<FString>& Args)
 	int32 NumSamples = 1;
 	bool bGamepad = false;
 	// The DeltaTime is not used in the code.
-	World->GetFirstPlayerController()->InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
+	FInputKeyParams KeyParams(Key, Delta, DeltaTime, NumSamples, bGamepad);
+	World->GetFirstPlayerController()->InputKey(KeyParams);
 	FTimerHandle TimerHandle;
 	World->GetTimerManager().SetTimer(TimerHandle, GetReleaseKey(Key), DeltaTime, false);
 

@@ -16,7 +16,7 @@ struct FFrameData
 };
 
 /** Use a seperate thread to write image to files */
-class FImageWorker : public FRunnable
+class UNREALCV_API FImageWorker : public FRunnable
 {
 public:
 	FImageWorker();

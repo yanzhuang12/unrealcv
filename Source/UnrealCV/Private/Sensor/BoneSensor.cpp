@@ -4,7 +4,7 @@
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "Runtime/Engine/Public/AnimationRuntime.h"
 
-FBoneSensor::FBoneSensor(const USkeletalMeshComponent* InSkeletalMeshComponent)
+FBoneSensor::FBoneSensor(USkeletalMeshComponent* InSkeletalMeshComponent)
 {
 	this->Component = InSkeletalMeshComponent;
 }
@@ -19,9 +19,9 @@ TArray<FBoneInfo> FBoneSensor::GetBonesInfo()
 	TArray<FBoneInfo> BonesInfo;
 
 	const TArray<FBoneIndexType>& RequiredBones = Component->RequiredBones;
-	USkeletalMesh* SkeletalMesh = Component->SkeletalMesh;
+	const USkeletalMesh* SkeletalMesh = Component->GetSkeletalMeshAsset();
 	const FTransformArrayA2& ComponentSpaceTransforms = Component->GetComponentSpaceTransforms();
-	const FTransformArrayA2& BoneSpaceTransforms = Component->BoneSpaceTransforms;
+	const TArray<FTransform> BoneSpaceTransforms = Component->GetBoneSpaceTransforms();
 	const FTransform& ComponentToWorld = Component->GetComponentToWorld();
 
 	bool bIncludeAll = false;
@@ -33,7 +33,7 @@ TArray<FBoneInfo> FBoneSensor::GetBonesInfo()
 	for (int32 Index = 0; Index < RequiredBones.Num(); ++Index)
 	{
 		int32 BoneIndex = RequiredBones[Index];
-		FName BoneName = SkeletalMesh->RefSkeleton.GetBoneName(BoneIndex);
+		FName BoneName = SkeletalMesh->GetRefSkeleton().GetBoneName(BoneIndex);
 		if (!bIncludeAll
 		&& !IncludedBoneNames.Contains(BoneName.ToString()))
 		{
@@ -42,9 +42,9 @@ TArray<FBoneInfo> FBoneSensor::GetBonesInfo()
 
 		// Skip if the bone is not what we need
 
-		FTransform BoneTM = BoneSpaceTransforms[BoneIndex];
-		FTransform ComponentTM = ComponentSpaceTransforms[BoneIndex];
-		FTransform WorldTM = ComponentTM * ComponentToWorld;
+		const FTransform BoneTM = BoneSpaceTransforms[BoneIndex];
+		const FTransform ComponentTM = ComponentSpaceTransforms[BoneIndex];
+		const FTransform WorldTM = ComponentTM * ComponentToWorld;
 
 		/*
 		int32 ParentIndex = SkeletalMesh->RefSkeleton.GetParentIndex(BoneIndex);
