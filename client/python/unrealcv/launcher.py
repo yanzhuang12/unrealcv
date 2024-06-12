@@ -96,8 +96,9 @@ class RunUnreal():
         if self.use_docker:
             self.docker.close()
         else:
-            self.env.terminate()
-            self.env.wait()
+            self.env.kill()
+            # self.env.terminate()
+            # self.env.wait()
 
     def signal_handler(self, signum, frame):
         self.close()
