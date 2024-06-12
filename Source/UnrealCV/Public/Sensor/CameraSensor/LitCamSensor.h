@@ -10,7 +10,7 @@
  * https://forums.unrealengine.com/development-discussion/rendering/59403-scenecapturecomponent2d-antialiasing
  */
 UCLASS(meta = (BlueprintSpawnableComponent))
-class ULitCamSensor : public UBaseCameraSensor
+class UNREALCV_API ULitCamSensor : public UBaseCameraSensor
 {
 	GENERATED_BODY()
 

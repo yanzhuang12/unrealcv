@@ -6,7 +6,7 @@
 
 /** Depth sensor */
 UCLASS(meta = (BlueprintSpawnableComponent))
-class UDepthCamSensor : public UBaseCameraSensor
+class UNREALCV_API UDepthCamSensor : public UBaseCameraSensor
 {
 	GENERATED_BODY()
 

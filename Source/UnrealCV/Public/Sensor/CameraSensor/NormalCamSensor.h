@@ -6,7 +6,7 @@
 
 /** Surface normal sensor */
 UCLASS()
-class UNormalCamSensor : public UBaseCameraSensor
+class UNREALCV_API UNormalCamSensor : public UBaseCameraSensor
 {
 	GENERATED_BODY()
 
