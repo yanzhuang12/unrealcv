@@ -37,7 +37,9 @@ void AUnrealcvWorldController::AttachPawnSensor()
 	UWorld *PawnWorld = Pawn->GetWorld();
 	UWorld *GameWorld = FUnrealcvServer::Get().GetWorld();
 
+	check(IsValid(GameWorld));
 	check(PawnWorld == GameWorld);
+
 	PawnCamSensor->AttachToComponent(Pawn->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	// AActor* OwnerActor = FusionCamSensor->GetOwner();
 	PawnCamSensor->RegisterComponent(); // Is this neccessary?
