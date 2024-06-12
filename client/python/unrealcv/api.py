@@ -451,14 +451,17 @@ class UnrealCv_API(object):
             res = self.client.request(cmd)
         return self.decoder.string2floats(res)  # min x,y,z  max x,y,z
 
-    def get_obj_size(self, obj):
+    def get_obj_size(self, obj, box=True):
         # return the size of the bounding box
         self.set_obj_rotation(obj, [0, 0, 0])  # init
         bounds = self.get_obj_bounds(obj)
         x = bounds[3] - bounds[0]
         y = bounds[4] - bounds[1]
         z = bounds[5] - bounds[2]
-        return [x, y, z]
+        if box:
+            return [x, y, z]
+        else:
+            return x*y*z
 
     def get_obj_scale(self, obj, return_cmd=False):
         # set object scale
