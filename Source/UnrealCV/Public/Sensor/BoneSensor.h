@@ -26,7 +26,7 @@ class UNREALCV_API FBoneSensor
 {
 public:
 	/** Construct a BoneSensor to extract data from a SkeletalMeshComponent */
-	explicit FBoneSensor(USkeletalMeshComponent* InSkeletalMeshComponent);
+	explicit FBoneSensor(class USkeletalMeshComponent* InSkeletalMeshComponent);
 
 	/** The bone names this BoneSensor should extract */
 	void SetBones(const TArray<FString>& InIncludedBoneNames);
