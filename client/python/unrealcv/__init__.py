@@ -260,9 +260,11 @@ class Client:
             return False
 
     def isconnected(self):
+        """Check whether client is connected to server"""
         return self.sock is not None
 
     def disconnect(self):
+        """Disconnect from server"""
         if self.isconnected():
             _L.debug(
                 'BaseClient, request disconnect from server in %s',
@@ -362,6 +364,14 @@ class Client:
         return None
 
     def request_batch_async(self, batch):
+        """
+        Send a batch of requests to server without waiting for any reply.
+        batch : list
+            a list of requests, each request is a string, such as ['command1', 'command2', ...]
+        Returns
+        -------
+        None
+        """
         for message in batch:
             if sys.version_info[0] == 3:
                 if not isinstance(message, bytes):
@@ -377,6 +387,22 @@ class Client:
         return None
 
     def request_batch(self, batch):
+        """
+        Send a batch of requests to server and wait util get all responses from server.
+        Parameters
+        ----------
+        batch : list
+            a list of requests, each request is a string, such as ['command1', 'command2', ...]
+        Returns
+        -------
+        list
+            a list of responses, such as ['response1', 'response2', ...]
+
+        Examples
+        --------
+        >>> client.request_batch(['vget /camera/0/location', 'vget /camera/0/rotation'])
+        ['100.0 -100.0 100.0', '0.0 0.0 0.0']
+        """
         for message in batch:
             if sys.version_info[0] == 3:
                 if not isinstance(message, bytes):
@@ -449,9 +475,9 @@ class Client:
 # To use IPC on Unix, set this path to: /tmp/unrealcv_{portnum}.socket
 # Your executable will create this file on startup.
 
-print('=> Info: Use inet client...')
-(HOST, PORT) = ('localhost', 9000)
-client = Client((HOST, PORT), 'inet')
+# print('=> Info: Use inet client...')
+# (HOST, PORT) = ('localhost', 9000)
+# client = Client((HOST, PORT), 'inet')
 
 # unix_socket_path = '/tmp/unrealcv_9000.socket' # for example
 # if 'linux' in sys.platform and unix_socket_path is not None and os.path.exists(unix_socket_path):

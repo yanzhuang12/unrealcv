@@ -566,12 +566,12 @@ void FCameraHandler::RegisterCommands()
 	CommandDispatcher->BindCommand(
 		"vget /camera/[uint]/object_mask [str]",
 		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::GetCameraObjMask),
-		"Get npy binary data from depth sensor");
+		"Get object mask from camera sensor");
 
 	CommandDispatcher->BindCommand(
 		"vget /camera/[uint]/seg [str]",
 		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::GetCameraObjMask),
-		"Get npy binary data from depth sensor");
+		"Get object mask from camera sensor");
 
 	CommandDispatcher->BindCommand(
 		"vset /viewmode [str]",
@@ -605,7 +605,7 @@ void FCameraHandler::RegisterCommands()
 
 	CommandDispatcher->BindCommand(
 		"vget /camera/[uint]/size",
-		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetSize),
+		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::GetSize),
 		"Get Camera Film Size"
 	);
 
