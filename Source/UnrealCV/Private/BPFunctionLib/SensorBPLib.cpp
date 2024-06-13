@@ -4,6 +4,7 @@
 #include "FusionCamSensor.h"
 #include "Runtime/Engine/Classes/GameFramework/Pawn.h"
 #include "Runtime/CoreUObject/Public/UObject/UObjectHash.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 TArray<UFusionCamSensor*> USensorBPLib::GetFusionSensorList()
 {
@@ -27,7 +28,12 @@ TArray<UFusionCamSensor*> USensorBPLib::GetFusionSensorList()
 	TArray<UObject*> UObjectList;
 	bool bIncludeDerivedClasses = false;
 	EObjectFlags ExclusionFlags = EObjectFlags::RF_ClassDefaultObject;
-	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
+	// EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
+	#if ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 4
+        EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
+    #else
+	    EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
+    #endif
 	GetObjectsOfClass(UFusionCamSensor::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags, ExclusionInternalFlags);
 
 	// Filter out objects not belong to the game world (editor world for example)

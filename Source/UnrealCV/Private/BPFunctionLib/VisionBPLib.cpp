@@ -224,7 +224,12 @@ void UVisionBPLib::GetActorList(TArray<AActor*>& ActorList)
 	TArray<UObject*> UObjectList;
 	bool bIncludeDerivedClasses = true;
 	EObjectFlags ExclusionFlags = EObjectFlags::RF_ClassDefaultObject;
-	EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
+	#if ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 4
+        EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
+    #else
+        EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
+    #endif
+	// EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
 	GetObjectsOfClass(AActor::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags, ExclusionInternalFlags);
 
 	for (UObject* ActorObject : UObjectList)
