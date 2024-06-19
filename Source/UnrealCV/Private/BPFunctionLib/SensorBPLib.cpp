@@ -34,7 +34,7 @@ TArray<UFusionCamSensor*> USensorBPLib::GetFusionSensorList()
     #else
 	    EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
     #endif
-	GetObjectsOfClass(UFusionCamSensor::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags, ExclusionInternalFlags);
+	GetObjectsOfClass(UFusionCamSensor::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags);
 
 	// Filter out objects not belong to the game world (editor world for example)
 	for (UObject* SensorObject : UObjectList)
