@@ -18,6 +18,8 @@ UAnnotationCamSensor::UAnnotationCamSensor(const FObjectInitializer& ObjectIniti
 	this->ShowFlags.SetPostProcessing(false);
 	this->ShowFlags.SetColorGrading(false);
 	this->ShowFlags.SetTonemapper(false); // Important to disable this
+	this->ShowFlags.SetAtmosphere(false);
+	this->ShowFlags.SetFog(false);
 
 	this->PostProcessSettings.bOverride_AutoExposureBias = true;
 	this->PostProcessSettings.AutoExposureBias = 0; // Overwrite anychange in the scene.
