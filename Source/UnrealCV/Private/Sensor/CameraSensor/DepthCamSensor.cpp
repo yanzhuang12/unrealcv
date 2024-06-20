@@ -2,6 +2,7 @@
 #include "DepthCamSensor.h"
 #include "AnnotationCamSensor.h"
 #include "TextureResource.h"
+#include "Runtime/Core/Public/Async/ParallelFor.h"
 
 UDepthCamSensor::UDepthCamSensor(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer)
@@ -37,10 +38,9 @@ void UDepthCamSensor::CaptureDepth(TArray<float>& DepthData, int& Width, int& He
 	TArray<FFloat16Color> FloatColorDepthData;
 	RenderTargetResource->ReadFloat16Pixels(FloatColorDepthData);
 
-	// TODO: Find a faster way to chunk a channel
-	for (int i = 0; i < FloatColorDepthData.Num(); i++)
-	{
-		FFloat16Color& FloatColor = FloatColorDepthData[i];
-		DepthData[i] = FloatColor.R;
-	}
+	ParallelFor(FloatColorDepthData.Num(), [&](int32 i)
+    {
+        FFloat16Color& FloatColor = FloatColorDepthData[i];
+        DepthData[i] = FloatColor.R;
+    });
 }

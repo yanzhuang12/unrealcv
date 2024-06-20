@@ -6,6 +6,7 @@
 
 #include "Component/AnnotationComponent.h"
 #include "UnrealcvLog.h"
+#include "Runtime/Core/Public/Async/ParallelFor.h"
 
 UAnnotationCamSensor::UAnnotationCamSensor(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer)
@@ -72,24 +73,33 @@ void UAnnotationCamSensor::GetAnnotationComponents(UWorld* World, TArray<TWeakOb
 	TArray<UObject*> UObjectList;
 	bool bIncludeDerivedClasses = false;
 	EObjectFlags ExclusionFlags = EObjectFlags::RF_ClassDefaultObject;
-	#if ENGINE_MAJOR_VERSION >= 5 && ENGINE_MINOR_VERSION >= 4
-        EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags_AllFlags;
-    #else
-	    EInternalObjectFlags ExclusionInternalFlags = EInternalObjectFlags::AllFlags;
-    #endif
 
 	GetObjectsOfClass(UAnnotationComponent::StaticClass(), UObjectList, bIncludeDerivedClasses, ExclusionFlags);
 
-	for (UObject* Object : UObjectList)
-	{
-		UPrimitiveComponent* Component = Cast<UPrimitiveComponent>(Object);
+    TArray<TArray<UPrimitiveComponent*>> TempComponentLists;
+    TempComponentLists.SetNum(UObjectList.Num());
+    ParallelFor(UObjectList.Num(), [&](int32 Index)
+    {
+        UObject* Object = UObjectList[Index];
+        UPrimitiveComponent* Component = Cast<UPrimitiveComponent>(Object);
 
-		if (Component->GetWorld() == World
-		&& !ComponentList.Contains(Component))
-		{
-			ComponentList.Add(Component);
-		}
-	}
+        if (Component->GetWorld() == World)
+        {
+            TempComponentLists[Index].Add(Component);
+        }
+    });
+
+    // Clear ComponentList to ensure it's empty before adding new elements
+    ComponentList.Empty();
+
+    for (const TArray<UPrimitiveComponent*>& TempComponentList : TempComponentLists)
+    {
+        for (UPrimitiveComponent* Component : TempComponentList)
+        {
+            TWeakObjectPtr<UPrimitiveComponent> WeakComponent = Component;
+            ComponentList.Add(WeakComponent);
+        }
+    }
 
 	if (ComponentList.Num() == 0)
 	{
@@ -106,12 +116,11 @@ void UAnnotationCamSensor::CaptureSeg(TArray<FColor>& ImageData, int& Width, int
 
 	Capture(ImageData, Width, Height);
 
-	// TODO: Find a faster implementation.
-	if (ImageData.Num() != 0)
-	{
-		for (int i = 0; i < Width * Height; i++)
-		{
-			ImageData[i].A = 255;
-		}
-	}
+    if (ImageData.Num() != 0)
+    {
+        ParallelFor(Width * Height, [&](int32 i)
+        {
+            ImageData[i].A = 255;
+        });
+    }
 }
