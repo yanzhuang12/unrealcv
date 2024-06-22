@@ -498,6 +498,35 @@ FExecStatus FCameraHandler::SetOrthoWidth(const TArray<FString>& Args)
 	return FExecStatus::OK();
 }
 
+FExecStatus FCameraHandler::SetExposureMethod(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+	UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+	if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+	if (Args.Num() != 2) return FExecStatus::InvalidArgument; // exposure value
+	FString ExposureType = Args[1];
+	if (ExposureType.ToLower() == "histogram")
+    {
+        FusionCamSensor->SetExposureMethod(EAutoExposureMethod::AEM_Histogram);
+        return FExecStatus::OK();
+    }
+    else if  (ExposureType.ToLower() == "basic")
+    {
+        FusionCamSensor->SetExposureMethod(EAutoExposureMethod::AEM_Basic);
+        return FExecStatus::OK();
+    }
+    else if  (ExposureType.ToLower() == "manual")
+    {
+        FusionCamSensor->SetExposureMethod(EAutoExposureMethod::AEM_Manual);
+        return FExecStatus::OK();
+    }
+    else
+    {
+        FString ErrorMsg = FString::Printf(TEXT("Can not support auto exposure mode %s, available options are true and false"), *ExposureType);
+        return FExecStatus::Error(ErrorMsg);
+    }
+}
+
 void FCameraHandler::RegisterCommands()
 {
 	CommandDispatcher->BindCommand(
@@ -619,5 +648,11 @@ void FCameraHandler::RegisterCommands()
 		"vset /camera/[uint]/projection_type [str]",
 		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetProjectionType),
 		"Set camera projection type"
+	);
+
+	CommandDispatcher->BindCommand(
+	    "vset /camera/[uint]/exposure_method [str]",
+	    FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetExposureMethod),
+	    "Set camera exposure method"
 	);
 }

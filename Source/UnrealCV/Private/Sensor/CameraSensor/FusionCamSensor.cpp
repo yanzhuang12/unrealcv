@@ -248,3 +248,9 @@ void UFusionCamSensor::SetOrthoWidth(float OrthoWidth)
 		Sensor->OrthoWidth = OrthoWidth;
 	}
 }
+
+void UFusionCamSensor::SetExposureMethod(EAutoExposureMethod Method)
+{
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureMethod = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureMethod = Method;
+}

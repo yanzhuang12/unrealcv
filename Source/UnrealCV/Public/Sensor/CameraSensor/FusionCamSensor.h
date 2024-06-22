@@ -95,6 +95,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "unrealcv")
 	void SetOrthoWidth(float OrthoWidth);
 
+    UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetExposureMethod(EAutoExposureMethod ExposureMethod);
+
 	// UFUNCTION(BlueprintPure, Category = "unrealcv")
 	// float GetFilmHeight();
 
