@@ -22,7 +22,9 @@ UBaseCameraSensor::UBaseCameraSensor(const FObjectInitializer& ObjectInitializer
 	this->ShowFlags.SetPostProcessing(true);
 	bCaptureEveryFrame = false;
 	bCaptureOnMovement = false;
+	PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
 	CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
+	bUseRayTracingIfEnabled = true;
 	bAlwaysPersistRenderingState = true; 
 
 	FServerConfig& Config = FUnrealcvServer::Get().Config;
