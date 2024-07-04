@@ -95,9 +95,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "unrealcv")
 	void SetOrthoWidth(float OrthoWidth);
 
+	UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetLitCaptureSource(ESceneCaptureSource CaptureSource);
+
+    UFUNCTION(BlueprintCallable, Category = "unrealcv")
+    void SetReflectionMethod(EReflectionMethod::Type Method);
+
+    UFUNCTION(BlueprintCallable, Category = "unrealcv")
+    void SetGlobalIlluminationMethod(EDynamicGlobalIlluminationMethod::Type Method);
+
     UFUNCTION(BlueprintCallable, Category = "unrealcv")
 	void SetExposureMethod(EAutoExposureMethod ExposureMethod);
 
+	UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetExposureBias(float ExposureBias);
+
+	UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetAutoExposureSpeed(float ExposureSpeedDown, float ExposureSpeedUp);
+
+	UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetAutoExposureBrightness(float MinBrightness, float MaxBrightness);
+
+	UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetApplyPhysicalCameraExposure(int ApplyPhysicalCameraExposure);
+
+	UFUNCTION(BlueprintCallable, Category = "unrealcv")
+	void SetMotionBlurParams(float MotionBlurAmount, float MotionBlurMax, float MotionBlurPerObjectSize, int MotionBlurTargetFPS);
+
+    UFUNCTION(BlueprintCallable, Category = "unrealcv")
+    void SetFocalParams(float FocalDistance, float FocalRegion);
 	// UFUNCTION(BlueprintPure, Category = "unrealcv")
 	// float GetFilmHeight();
 

@@ -249,8 +249,89 @@ void UFusionCamSensor::SetOrthoWidth(float OrthoWidth)
 	}
 }
 
+void UFusionCamSensor::SetLitCaptureSource(ESceneCaptureSource CaptureSource)
+{
+    this->LitCamSensor->CaptureSource = CaptureSource;
+}
+
+// Configure the post process settings
+void UFusionCamSensor::SetReflectionMethod(EReflectionMethod::Type Method)
+{
+    // None, Lumen, ScreenSpace, RayTraced
+    this->LitCamSensor->PostProcessSettings.bOverride_ReflectionMethod = true;
+    this->LitCamSensor->PostProcessSettings.ReflectionMethod = Method;
+}
+
+void UFusionCamSensor::SetGlobalIlluminationMethod(EDynamicGlobalIlluminationMethod::Type Method)
+{
+    // None, Lumen, ScreenSpace, RayTraced, Plugin,
+    this->LitCamSensor->PostProcessSettings.bOverride_DynamicGlobalIlluminationMethod = true;
+    this->LitCamSensor->PostProcessSettings.DynamicGlobalIlluminationMethod = Method;
+}
+
 void UFusionCamSensor::SetExposureMethod(EAutoExposureMethod Method)
 {
     this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureMethod = true;
     this->LitCamSensor->PostProcessSettings.AutoExposureMethod = Method;
+}
+
+void UFusionCamSensor::SetExposureBias(float ExposureBias)
+{
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureBias = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureBias = ExposureBias;
+}
+
+void UFusionCamSensor::SetAutoExposureSpeed(float SpeedDown, float SpeedUp)
+{
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureSpeedDown = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureSpeedDown = SpeedDown;
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureSpeedUp = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureSpeedUp = SpeedUp;
+}
+
+void UFusionCamSensor::SetAutoExposureBrightness(float MinBrightness, float MaxBrightness)
+{
+    // Brightness range for the auto exposure algorithm
+    if (MinBrightness > MaxBrightness)
+    {
+        UE_LOG(LogUnrealCV, Warning, TEXT("MinBrightness should be smaller than MaxBrightness"));
+        return;
+    }
+    // Auto-Exposure minimum adaptation.
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureMinBrightness = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureMinBrightness = MinBrightness;
+    // Auto-Exposure
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureMaxBrightness = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureMaxBrightness = MaxBrightness;
+}
+
+void UFusionCamSensor::SetApplyPhysicalCameraExposure(int ApplyPhysicalCameraExposure)
+{
+    this->LitCamSensor->PostProcessSettings.bOverride_AutoExposureApplyPhysicalCameraExposure = true;
+    this->LitCamSensor->PostProcessSettings.AutoExposureApplyPhysicalCameraExposure = ApplyPhysicalCameraExposure;
+}
+
+
+void UFusionCamSensor::SetMotionBlurParams(float MotionBlurAmount, float MotionBlurMax, float MotionBlurPerObjectSize, int MotionBlurTargetFPS)
+{
+    // Strength of motion blur, 0:off
+    this->LitCamSensor->PostProcessSettings.bOverride_MotionBlurAmount = true;
+    this->LitCamSensor->PostProcessSettings.MotionBlurAmount = MotionBlurAmount;
+    // Max distortion caused by motion blur, in percent of the screen width, 0:off
+    this->LitCamSensor->PostProcessSettings.bOverride_MotionBlurMax = true;
+    this->LitCamSensor->PostProcessSettings.MotionBlurMax = MotionBlurMax;
+    // The minimum projected screen radius for a primitive to be drawn in the velocity pass, percentage of screen width.
+    this->LitCamSensor->PostProcessSettings.bOverride_MotionBlurPerObjectSize = true;
+    this->LitCamSensor->PostProcessSettings.MotionBlurPerObjectSize = MotionBlurPerObjectSize;
+    // Target frame rate for motion blur
+    this->LitCamSensor->PostProcessSettings.bOverride_MotionBlurTargetFPS = true;
+    this->LitCamSensor->PostProcessSettings.MotionBlurTargetFPS = MotionBlurTargetFPS;
+}
+
+void UFusionCamSensor::SetFocalParams(float FocalDistance, float FocalRegion)
+{
+    this->LitCamSensor->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = true;
+    this->LitCamSensor->PostProcessSettings.DepthOfFieldFocalDistance = FocalDistance;
+    this->LitCamSensor->PostProcessSettings.bOverride_DepthOfFieldFocalRegion = true;
+    this->LitCamSensor->PostProcessSettings.DepthOfFieldFocalRegion = FocalRegion;
 }

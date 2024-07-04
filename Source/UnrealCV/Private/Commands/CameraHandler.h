@@ -75,5 +75,23 @@ private:
 
 	FExecStatus SetOrthoWidth(const TArray<FString>& Args);
 
+    FExecStatus SetLitSource(const TArray<FString>& Args);
+
+    FExecStatus SetReflectionMethod(const TArray<FString>& Args);
+
+    FExecStatus SetGlobalIlluminationMethod(const TArray<FString>& Args);
+
 	FExecStatus SetExposureMethod(const TArray<FString>& Args);
+
+	FExecStatus SetExposureBias(const TArray<FString>& Args);
+
+	FExecStatus SetAutoExposureSpeed(const TArray<FString>& Args);
+
+	FExecStatus SetAutoExposureBrightness(const TArray<FString>& Args);
+
+	FExecStatus SetApplyPhysicalCameraExposure(const TArray<FString>& Args);
+
+	FExecStatus SetMotionBlurParams(const TArray<FString>& Args);
+
+	FExecStatus SetFocalParams(const TArray<FString>& Args);
 };

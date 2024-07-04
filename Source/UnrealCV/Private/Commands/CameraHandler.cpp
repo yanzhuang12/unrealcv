@@ -527,6 +527,207 @@ FExecStatus FCameraHandler::SetExposureMethod(const TArray<FString>& Args)
     }
 }
 
+FExecStatus FCameraHandler::SetLitSource(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 2) return FExecStatus::InvalidArgument;
+    FString LitSource = Args[1];
+    if (LitSource.ToLower() == "ftc_hdr")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_FinalToneCurveHDR);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "fc_hdr")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_FinalColorHDR);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "sc_hdr")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_SceneColorHDR);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "scna_hdr")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_SceneColorHDRNoAlpha);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "ldr")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_FinalColorLDR);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "base")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_BaseColor);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "color_depth")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_SceneDepth);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "scene_depth")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_SceneDepth);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "device_depth")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_DeviceDepth);
+        return FExecStatus::OK();
+    }
+    else if (LitSource.ToLower() == "normal")
+    {
+        FusionCamSensor->SetLitCaptureSource(ESceneCaptureSource::SCS_Normal);
+        return FExecStatus::OK();
+    }
+    else
+    {
+        FString ErrorMsg = FString::Printf(TEXT("Can not support lit source %s, available options are ftc_hdr, fc_hdr, sc_hdr, scna_hdr, ldr, base, color_depth, scene_depth, device_depth, normal"), *LitSource);
+        return FExecStatus::Error(ErrorMsg);
+    }
+}
+
+FExecStatus FCameraHandler::SetReflectionMethod(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 2) return FExecStatus::InvalidArgument;
+    FString ReflectionMethod = Args[1];
+    if (ReflectionMethod.ToLower() == "none")
+    {
+        FusionCamSensor->SetReflectionMethod(EReflectionMethod::Type::None);
+        return FExecStatus::OK();
+    }
+    else if (ReflectionMethod.ToLower() == "lumen")
+    {
+        FusionCamSensor->SetReflectionMethod(EReflectionMethod::Type::Lumen);
+        return FExecStatus::OK();
+    }
+    else if (ReflectionMethod.ToLower() == "screen_space")
+    {
+        FusionCamSensor->SetReflectionMethod(EReflectionMethod::Type::ScreenSpace);
+        return FExecStatus::OK();
+    }
+    else
+    {
+        FString ErrorMsg = FString::Printf(TEXT("Can not support reflection method %s, available options are none, lumen, screen_space."), *ReflectionMethod);
+        return FExecStatus::Error(ErrorMsg);
+    }
+}
+
+FExecStatus FCameraHandler::SetGlobalIlluminationMethod(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 2) return FExecStatus::InvalidArgument;
+    FString IlluminationMethod = Args[1];
+    if (IlluminationMethod.ToLower() == "none")
+    {
+        FusionCamSensor->SetGlobalIlluminationMethod(EDynamicGlobalIlluminationMethod::Type::None);
+        return FExecStatus::OK();
+    }
+    else if (IlluminationMethod.ToLower() == "lumen")
+    {
+        FusionCamSensor->SetGlobalIlluminationMethod(EDynamicGlobalIlluminationMethod::Type::Lumen);
+        return FExecStatus::OK();
+    }
+    else if (IlluminationMethod.ToLower() == "screen_space")
+    {
+        FusionCamSensor->SetGlobalIlluminationMethod(EDynamicGlobalIlluminationMethod::Type::ScreenSpace);
+        return FExecStatus::OK();
+    }
+    else if (IlluminationMethod.ToLower() == "plugin")
+    {
+        FusionCamSensor->SetGlobalIlluminationMethod(EDynamicGlobalIlluminationMethod::Type::Plugin);
+        return FExecStatus::OK();
+    }
+    else
+    {
+        FString ErrorMsg = FString::Printf(TEXT("Can not support global illumination method %s, available options are none, lumen, screen_space, plugin."), *IlluminationMethod);
+        return FExecStatus::Error(ErrorMsg);
+    }
+}
+
+FExecStatus FCameraHandler::SetExposureBias(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 2) return FExecStatus::InvalidArgument; // exposure value
+    float ExposureBias = FCString::Atof(*Args[1]);
+    FusionCamSensor->SetExposureBias(ExposureBias);
+    return FExecStatus::OK();
+}
+
+FExecStatus FCameraHandler::SetAutoExposureSpeed(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 3) return FExecStatus::InvalidArgument; // exposure value
+    float SpeedDown = FCString::Atof(*Args[1]);
+    float SpeedUp = FCString::Atof(*Args[2]);
+    FusionCamSensor->SetAutoExposureSpeed(SpeedDown, SpeedUp);
+    return FExecStatus::OK();
+}
+
+FExecStatus FCameraHandler::SetAutoExposureBrightness(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 3) return FExecStatus::InvalidArgument;
+    float MinBrightness = FCString::Atof(*Args[1]);
+    float MaxBrightness = FCString::Atof(*Args[2]);
+    FusionCamSensor->SetAutoExposureBrightness(MinBrightness, MaxBrightness);
+    return FExecStatus::OK();
+}
+
+
+FExecStatus FCameraHandler::SetApplyPhysicalCameraExposure(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 2) return FExecStatus::InvalidArgument;
+    int ApplyPhysicalCameraExposure = FCString::Atoi(*Args[1]);
+    FusionCamSensor->SetApplyPhysicalCameraExposure(ApplyPhysicalCameraExposure);
+    return FExecStatus::OK();
+}
+
+FExecStatus FCameraHandler::SetMotionBlurParams(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 5) return FExecStatus::InvalidArgument; // motion blur amount, max, per object, fps
+    float MotionBlurAmount = FCString::Atof(*Args[1]);
+    float MotionBlurMax = FCString::Atof(*Args[2]);
+    float MotionBlurPerObject = FCString::Atof(*Args[3]);
+    int MotionBlurFPS = FCString::Atoi(*Args[4]);
+    FusionCamSensor->SetMotionBlurParams(MotionBlurAmount, MotionBlurMax, MotionBlurPerObject, MotionBlurFPS);
+    return FExecStatus::OK();
+}
+
+FExecStatus FCameraHandler::SetFocalParams(const TArray<FString>& Args)
+{
+    FExecStatus Status = FExecStatus::InvalidArgument;
+    UFusionCamSensor* FusionCamSensor = GetCamera(Args, Status);
+    if (!IsValid(FusionCamSensor)) return FExecStatus::InvalidArgument;
+    if (Args.Num() != 3) return FExecStatus::InvalidArgument; // exposure value
+    float FocalDistance = FCString::Atof(*Args[1]);
+    float FocalRange = FCString::Atof(*Args[2]);
+    FusionCamSensor->SetFocalParams(FocalDistance, FocalRange);
+    return FExecStatus::OK();
+}
+
+
 void FCameraHandler::RegisterCommands()
 {
 	CommandDispatcher->BindCommand(
@@ -651,8 +852,62 @@ void FCameraHandler::RegisterCommands()
 	);
 
 	CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/lit_source [str]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetLitSource),
+        "Set the capture source of the lit camera"
+    );
+
+    CommandDispatcher->BindCommand(
+		"vset /camera/[uint]/reflection [str]",
+		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetReflectionMethod),
+		"Set camera reflection method: None, Lumen, ScreenSpace"
+	);
+
+	CommandDispatcher->BindCommand(
+		"vset /camera/[uint]/illumination [str]",
+		FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetGlobalIlluminationMethod),
+		"Set camera global illumination method: None, Lumen, ScreenSpace, Plugin,"
+	);
+
+	CommandDispatcher->BindCommand(
 	    "vset /camera/[uint]/exposure_method [str]",
 	    FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetExposureMethod),
 	    "Set camera exposure method"
 	);
+
+	CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/exposure_bias [float]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetExposureBias),
+        "Set camera exposure bias"
+    );
+
+    CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/auto_speed [float] [float]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetAutoExposureSpeed),
+        "Set camera auto-exposure speed down and speed up"
+    );
+
+    CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/auto_brightness [float] [float]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetAutoExposureBrightness),
+        "Set camera auto-exposure min max brightness"
+    );
+
+    CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/physical_exposure [uint]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetApplyPhysicalCameraExposure),
+        "Set camera apply physical camera exposure"
+    );
+
+    CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/motion_blur [float] [float] [float] [uint]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetMotionBlurParams),
+        "Set camera motion blur amount, max, per object, fps"
+    );
+
+    CommandDispatcher->BindCommand(
+        "vset /camera/[uint]/focal [float] [float]",
+        FDispatcherDelegate::CreateRaw(this, &FCameraHandler::SetFocalParams),
+        "Set camera focus distance and range"
+    );
 }
