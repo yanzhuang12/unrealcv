@@ -48,6 +48,12 @@ void FActionHandler::RegisterCommands()
 	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::Keyboard);
 	Help = "Send a keyboard action to the game";
 	CommandDispatcher->BindCommand("vset /action/keyboard [str] [float]", Cmd, Help);
+
+	CommandDispatcher->BindCommand(
+		"vset /action/clean_garbage",
+		FDispatcherDelegate::CreateRaw(this, &FActionHandler::GarbageCollection),
+		"Manually collect garbage in the RAM"
+	);
 }
 
 FExecStatus FActionHandler::PauseGame(const TArray<FString>& Args)
@@ -173,5 +179,11 @@ FExecStatus FActionHandler::Keyboard(const TArray<FString>& Args)
 	FTimerHandle TimerHandle;
 	World->GetTimerManager().SetTimer(TimerHandle, GetReleaseKey(Key), DeltaTime, false);
 
+	return FExecStatus::OK();
+}
+
+FExecStatus FActionHandler::GarbageCollection(const TArray<FString>& Args)
+{
+	GEngine->ForceGarbageCollection();
 	return FExecStatus::OK();
 }

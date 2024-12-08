@@ -28,6 +28,8 @@ private:
 
 	/** vset /action/eyes_distance [float] */
 	FExecStatus SetStereoDistance(const TArray<FString>& Args);
+	/** vset /action/clean_garbage */
+	FExecStatus GarbageCollection(const TArray<FString>& Args);
 
 	/** vset /action/keyboard [key_name] [delta] */
 	FExecStatus Keyboard(const TArray<FString>& Args);
