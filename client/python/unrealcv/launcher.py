@@ -27,7 +27,12 @@ class RunUnreal():
             self.path2binary = os.path.abspath(os.path.join(self.path2env, self.env_bin))
         self.env_map = ENV_MAP
 
-        self.path2unrealcv = os.path.join(os.path.split(self.path2binary)[0], 'unrealcv.ini')
+        if 'darwin' in sys.platform:
+            env_bin_name = self.env_bin.split('/')[1].split('.')[0]
+            self.path2unrealcv = os.path.join(self.path2binary, 'Contents/UE4', env_bin_name, 'Binaries/Mac/unrealcv.ini')
+            self.path2binary = os.path.join(self.path2binary, 'Contents/MacOS', env_bin_name)
+        else:
+            self.path2unrealcv = os.path.join(os.path.split(self.path2binary)[0], 'unrealcv.ini')
         assert os.path.exists(self.path2binary), \
             'Please load env binary in UnrealEnv and Check the env_bin in setting file!'
 
@@ -75,9 +80,11 @@ class RunUnreal():
             #self.modify_permission(self.path2env)
             cmd_exe = [os.path.abspath(self.path2binary)]
             self.set_ue_options(cmd_exe, opengl, offscreen, nullrhi, gpu_id)
-
-            self.env = subprocess.Popen(cmd_exe, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                                        stderr=subprocess.DEVNULL, start_new_session=True, env=display)
+            if 'darwin' in sys.platform:
+                self.env = subprocess.Popen(['open', cmd_exe[0]])
+            else:
+                self.env = subprocess.Popen( cmd_exe, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                            stderr=subprocess.DEVNULL, start_new_session=True, env=display)
             atexit.register(self.close)
             # signal.signal(signal.SIGTERM, self.signal_handler)
             # signal.signal(signal.SIGINT, self.signal_handler)
@@ -109,7 +116,7 @@ class RunUnreal():
             cmd_exe.append('-RenderOffScreen')
         if nullrhi:
             cmd_exe.append('-nullrhi')  # the rendering process is not launched, so we can not get the image
-        if gpu_id is not None:  # specify which gpu to use, if you have multiple gpus
+        if gpu_id is not None and 'darwin' not in sys.platform:  # specify which gpu to use, if you have multiple gpus
             cmd_exe.append(f'-graphicsadapter={gpu_id}')
         return cmd_exe
 
@@ -184,7 +191,7 @@ class RunUnreal():
             return 9000 # default port number
 
     def write_port(self, port):
-        """
+        self.write__ = """
         Write the port number to unrealcv.ini.
 
         Args:
@@ -232,7 +239,7 @@ class RunUnreal():
         import socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            if 'linux' in sys.platform:
+            if 'linux' in sys.platform or 'darwin' in sys.platform:
                 sock.bind((ip, port))
             elif 'win' in sys.platform:
                 sock.bind((ip, port))
