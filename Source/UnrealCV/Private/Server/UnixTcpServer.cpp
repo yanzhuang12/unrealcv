@@ -705,10 +705,16 @@ bool UUnixTcpServer::StartMessageServiceINet(FSocket* ClientSocket, const FIPv4E
 	return false; // TODO: What is the meaning of return value?
 }
 
+bool UUnixTcpServer::StartMessageServiceINet_Multi(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint)
+{
+	return false;
+}
+
 /** Connected Handler */
 bool UUnixTcpServer::Connected(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint)
 {
-	bool ServiceStatus = false;
+	// When a new connecton conneted to the server, there's a while loop in the StartMessageServiceINet will be executed permenantely which will prevent the server from doing anything else.
+	bool ServiceStatus = true;
 	BroadcastConnected(*ClientEndpoint.ToString());
 	// ServiceStatus = StartEchoService(ClientSocket, ClientEndpoint);
 	ServiceStatus = StartMessageServiceINet(ClientSocket, ClientEndpoint);
@@ -717,6 +723,40 @@ bool UUnixTcpServer::Connected(FSocket* ClientSocket, const FIPv4Endpoint& Clien
 	return ServiceStatus;
 	// This is a blocking service, if need to support multiple connections, consider start a new thread here.
 }
+
+
+bool UUnixTcpServer::Multi_Connected(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint)
+{
+	bool ServiceStatus = true;
+
+	//{
+	//	// Lock thread and add a new client to the server
+	//	FScopeLock Lock(&SocketLock);
+	//	ClientSockets.Add(ClientSocket);
+	//}
+	UE_LOG(LogUnrealCV, Warning, TEXT("BroadCast the connection"));
+
+	BroadcastConnected(*ClientEndpoint.ToString());
+	ConnectionSocket = ClientSocket;
+	FString Confirm = FString::Printf(TEXT("connected to %s"), *GetProjectName());
+	bool IsSent = this->SendMessageINet(Confirm); // Send a hello message through IP-port 
+	if (!IsSent)
+	{
+		UE_LOG(LogUnrealCV, Error, TEXT("Failed to send welcome message to client."));
+	}
+
+	
+	RunnerClient = new FClientHandler(ClientSocket, ClientEndpoint);
+
+	// bind OnReceived of FClientHandler to BroadcastReceived of UUnixTcpServer 
+	RunnerClient->OnReceived().AddLambda([this](const FString& Endpoint, const FString& Message) {
+		this->BroadcastReceived(Endpoint, Message);
+	});
+
+
+	return ServiceStatus;
+}
+
 
 
 bool UUnixTcpServer::Start(int32 InPortNum) // Restart the server if configuration changed
@@ -762,7 +802,7 @@ bool UUnixTcpServer::Start(int32 InPortNum) // Restart the server if configurati
 	TcpListener = TSharedPtr<FTcpListener>(new FTcpListener(*ServerSocket));
 	// TcpListener = new FTcpListener(Endpoint); // This will be released after start
 	// In FSocket, when a FSocket is set as reusable, it means SO_REUSEADDR, not SO_REUSEPORT.  see SocketsBSD.cpp
-	TcpListener->OnConnectionAccepted().BindUObject(this, &UUnixTcpServer::Connected);
+	TcpListener->OnConnectionAccepted().BindUObject(this, &UUnixTcpServer::Multi_Connected);
 	if (TcpListener->Init())
 	{
 		this->bIsListening = true;

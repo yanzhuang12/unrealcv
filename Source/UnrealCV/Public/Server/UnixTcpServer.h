@@ -2,8 +2,7 @@
 #pragma once
 
 #include "Runtime/Sockets/Public/Sockets.h"
-#include "Runtime/Networking/Public/Common/TcpListener.h"
-#include "Runtime/Networking/Public/Interfaces/IPv4/IPv4Endpoint.h"
+#include "ClientHandler.h"
 #include "Runtime/Core/Public/Serialization/ArrayReader.h"
 
 #if PLATFORM_LINUX
@@ -115,8 +114,15 @@ private:
 	/** Handle a new connected client, need to decide accept of reject */
 	bool Connected(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint);
 
+	/** Handle multiple connections to the server */
+	bool Multi_Connected(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint);
+
 	/** The connected client socket, only maintain one client at a time */
 	FSocket* ConnectionSocket; // FSimpleAbstractSocket's receive is hard to use for non-blocking mode
+
+
+	FClientHandler* RunnerClient;
+
 
 	// UDS socket file descriptor
 	int UDS_connfd = -1;
@@ -135,6 +141,9 @@ private:
 
 	/** Start a service to handle incoming message, ReceivedEvent will be fired when a new message arrive */
 	bool StartMessageServiceINet(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint);
+
+	/** Start a service to handle incoming message from multiple cilents*/
+	bool StartMessageServiceINet_Multi(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint);
 
 	/** Start a service to handle incoming message, with UDS, blocking service*/
 	bool StartMessageServiceUDS();
