@@ -17,7 +17,12 @@
 //#include <errno.h>
 #endif // PLATFORM_LINUX
 
+//#include "UnrealcvServer.h"
+
 #include "UnixTcpServer.generated.h"
+
+
+class FUnrealcvServer;
 
 /**
  * a simplified version from FNFSMessageHeader of UnrealEngine4, without CRC check
@@ -107,6 +112,10 @@ public:
 
 	FErrorEvent& OnError() { return ErrorEvent;  } // The reference can not be changed
 
+	TArray<FClientHandler*> RunnerClients;
+
+	FUnrealcvServer* UnrealcvServer;
+
 private:
 	/** Is the listening socket running */
 	bool bIsListening = false;
@@ -119,10 +128,6 @@ private:
 
 	/** The connected client socket, only maintain one client at a time */
 	FSocket* ConnectionSocket; // FSimpleAbstractSocket's receive is hard to use for non-blocking mode
-
-
-	FClientHandler* RunnerClient;
-
 
 	// UDS socket file descriptor
 	int UDS_connfd = -1;

@@ -134,7 +134,6 @@ FClientHandler::FClientHandler(FSocket* ClientSocket, const FIPv4Endpoint& Clien
 	ThreadName = FString::Printf(TEXT("New client connected from %s"), *ClientEndpoint.ToString());
 	Thread = FRunnableThread::Create(this, *ThreadName);
 	UE_LOG(LogUnrealCV, Log, TEXT("Create a new thread!"));
-	//UE_LOG(LogUnrealCV, Log, TEXT("New client connected is %s"), *ClientEndpoint.ToString());
 }
 
 FClientHandler::~FClientHandler()

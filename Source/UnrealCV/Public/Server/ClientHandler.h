@@ -8,7 +8,6 @@
 #include "HAL/Runnable.h"
 #include "SocketSubsystem.h"
 
-
 class FMultiSocketMessageHeader
 {
 	/** Error checking */
@@ -41,13 +40,16 @@ public:
     FClientHandler(FSocket* ClientSocket, const FIPv4Endpoint& ClientEndpoint);
     virtual ~FClientHandler();
 
-protected:
-    //Name of the thread
-    FString ThreadName;
+	//Name of the thread
+	FString ThreadName;
 
-    //Thread to create
-    FRunnableThread* Thread;
-    
+	//Thread to create
+	FRunnableThread* Thread;
+
+protected:
+
+
+
     //Determine if the stop function is called to stop this thread
     bool bStop;
 
