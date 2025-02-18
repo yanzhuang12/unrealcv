@@ -54,6 +54,12 @@ void FActionHandler::RegisterCommands()
 		FDispatcherDelegate::CreateRaw(this, &FActionHandler::GarbageCollection),
 		"Manually collect garbage in the RAM"
 	);
+
+	CommandDispatcher->BindCommand(
+		"vset /action/set_fixed_frame_rate [float]",
+		FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetFixedFPS),
+		"Set fixed frame rate of the world"
+	);
 }
 
 FExecStatus FActionHandler::PauseGame(const TArray<FString>& Args)
@@ -185,5 +191,18 @@ FExecStatus FActionHandler::Keyboard(const TArray<FString>& Args)
 FExecStatus FActionHandler::GarbageCollection(const TArray<FString>& Args)
 {
 	GEngine->ForceGarbageCollection();
+	return FExecStatus::OK();
+}
+
+
+FExecStatus FActionHandler::SetFixedFPS(const TArray<FString>& Args)
+{
+	if (Args.Num() != 1)
+	{
+		return FExecStatus::Error("Missing parameter for frame rate");
+	}
+	float frame_rate = FCString::Atof(*Args[0]);
+	GEngine->FixedFrameRate = frame_rate;
+	GEngine->bUseFixedFrameRate = true;
 	return FExecStatus::OK();
 }
