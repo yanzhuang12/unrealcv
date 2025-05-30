@@ -9,8 +9,9 @@
 #include "WorldController.h"
 #include "VisionBPLib.h"
 
+float FActionHandler::tick_interval = 0.0f;
+bool FActionHandler::bTickIntervalHasValue = false;
 
-#if WITH_EDITOR
 void FActionHandler::RegisterCommands()
 {
 	FDispatcherDelegate Cmd;
@@ -68,6 +69,12 @@ void FActionHandler::RegisterCommands()
 	//	FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetFixedFPS),
 	//	"Set synchronous mode of the environmne,t false means asynchronous"
 	//);
+
+	CommandDispatcher->BindCommand(
+		"vset /action/tick_intervel [float]",
+		FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetTickInterval),
+		"Add a tick"
+	);
 
 	CommandDispatcher->BindCommand(
 		"vset /action/tick",
@@ -75,66 +82,7 @@ void FActionHandler::RegisterCommands()
 		"Add a tick"
 	);
 }
-#else
-void FActionHandler::RegisterCommands()
-{
-	FDispatcherDelegate Cmd;
-	FString Help;
 
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::PauseGame);
-	Help = "Pause the game";
-	CommandDispatcher->BindCommand("vset /action/game/pause", Cmd, Help);
-
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::ResumeGame);
-	Help = "Resume the game";
-	CommandDispatcher->BindCommand("vset /action/game/resume", Cmd, Help);
-
-	CommandDispatcher->BindCommand(
-		"vget /action/game/is_paused",
-		FDispatcherDelegate::CreateRaw(this, &FActionHandler::GetIsPaused),
-		"Get the pause status"
-	);
-
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::OpenLevel);
-	Help = "Open level";
-	CommandDispatcher->BindCommand("vset /action/game/level [str]", Cmd, Help);
-
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::EnableInput);
-	Help = "Enable input";
-	CommandDispatcher->BindCommand("vset /action/input/enable", Cmd, Help);
-
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::DisableInput);
-	Help = "Disable input";
-	CommandDispatcher->BindCommand("vset /action/input/disable", Cmd, Help);
-
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetStereoDistance);
-	Help = "Set the distance of binocular stereo camera";
-	CommandDispatcher->BindCommand("vset /action/eyes_distance [float]", Cmd, Help);
-
-
-	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::Keyboard);
-	Help = "Send a keyboard action to the game";
-	CommandDispatcher->BindCommand("vset /action/keyboard [str] [float]", Cmd, Help);
-
-	CommandDispatcher->BindCommand(
-		"vset /action/clean_garbage",
-		FDispatcherDelegate::CreateRaw(this, &FActionHandler::GarbageCollection),
-		"Manually collect garbage in the RAM"
-	);
-
-	CommandDispatcher->BindCommand(
-		"vset /action/set_fixed_frame_rate [float]",
-		FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetFixedFPS),
-		"Set fixed frame rate of the world"
-	);
-
-	//CommandDispatcher->BindCommand(
-	//	"vset /action/set_synchronous_mode [str]",
-	//	FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetFixedFPS),
-	//	"Set synchronous mode of the environmne,t false means asynchronous"
-	//);
-}
-#endif // WITH_EDITOR
 
 FExecStatus FActionHandler::PauseGame(const TArray<FString>& Args)
 {
@@ -310,38 +258,87 @@ FExecStatus FActionHandler::SetFixedFPS(const TArray<FString>& Args)
 //}
 
 
-#if WITH_EDITOR
-#include "Kismet2/DebuggerCommands.h"
-#include "Kismet2/KismetDebugUtilities.h"
-#include "UnrealEd.h"
-#include "Framework/Application/SlateApplication.h"
+//#if WITH_EDITOR
+//#include "Kismet2/DebuggerCommands.h"
+//#include "Kismet2/KismetDebugUtilities.h"
+//#include "UnrealEd.h"
+//#include "Framework/Application/SlateApplication.h"
+//
+//FExecStatus FActionHandler::Tick(const TArray<FString>& Args)
+//{
+//	if (GIntraFrameDebuggingGameThread && FKismetDebugUtilities::GetCurrentDebuggingWorld() == nullptr)
+//	{
+//		return FExecStatus::Error("No valid debug world");;
+//	}
+//		
+//	FKismetDebugUtilities::RequestSingleStepIn();
+//	if (FPlayWorldCommandCallbacks::HasPlayWorld())
+//	{
+//		GUnrealEd->SetPIEWorldsPaused(false);
+//		FSlateApplication::Get().LeaveDebuggingMode();
+//		FSlateApplication::Get().LeaveDebuggingMode(true);
+//
+//		FKismetDebugUtilities::RequestSingleStepIn();
+//		if (FPlayWorldCommandCallbacks::HasPlayWorld())
+//		{
+//			GUnrealEd->PlayWorld->bDebugFrameStepExecution = true;
+//			FSlateApplication::Get().LeaveDebuggingMode();
+//			GUnrealEd->PlaySessionSingleStepped();
+//		}
+//
+//		GUnrealEd->PlaySessionSingleStepped();
+//	}
+//
+//	return FExecStatus::OK();
+//}
+//
+//#endif // WITH_EDITOR
+
+FExecStatus FActionHandler::SetTickInterval(const TArray<FString>& Args)
+{
+	if (Args.Num() != 1)
+	{
+		return FExecStatus::Error("Missing parameter for tick interval");
+	}
+	FActionHandler::tick_interval = FCString::Atof(*Args[0]);
+	FActionHandler::bTickIntervalHasValue = true; 
+	return FExecStatus::OK();
+}
 
 FExecStatus FActionHandler::Tick(const TArray<FString>& Args)
 {
-	if (GIntraFrameDebuggingGameThread && FKismetDebugUtilities::GetCurrentDebuggingWorld() == nullptr)
+	if (!FActionHandler::bTickIntervalHasValue)
 	{
-		return FExecStatus::Error("No valid debug world");;
+		return FExecStatus::Error("tick_interval is not defined");
 	}
-		
-	FKismetDebugUtilities::RequestSingleStepIn();
-	if (FPlayWorldCommandCallbacks::HasPlayWorld())
+
+	UWorld* World = this->GetWorld();
+	if (!IsValid(World))
 	{
-		GUnrealEd->SetPIEWorldsPaused(false);
-		FSlateApplication::Get().LeaveDebuggingMode();
-		FSlateApplication::Get().LeaveDebuggingMode(true);
-
-		FKismetDebugUtilities::RequestSingleStepIn();
-		if (FPlayWorldCommandCallbacks::HasPlayWorld())
-		{
-			GUnrealEd->PlayWorld->bDebugFrameStepExecution = true;
-			FSlateApplication::Get().LeaveDebuggingMode();
-			GUnrealEd->PlaySessionSingleStepped();
-		}
-
-		GUnrealEd->PlaySessionSingleStepped();
+		return FExecStatus::Error("Invalid world");
 	}
+
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (!IsValid(PlayerController))
+	{
+		return FExecStatus::Error("Invalid player controller");
+	}
+
+	// Step 1: 如果游戏是暂停的，立刻恢复
+	if (PlayerController->IsPaused())
+	{
+		this->ResumeGame(TArray<FString>());
+	}
+
+	// Step 2: 设置定时器，在 tick_interval 后暂停
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda([this]() {
+		this->PauseGame(TArray<FString>());
+	});
+
+	FTimerHandle TimerHandle;
+	World->GetTimerManager().SetTimer(TimerHandle, TimerDel, tick_interval, false);
 
 	return FExecStatus::OK();
 }
 
-#endif // WITH_EDITOR

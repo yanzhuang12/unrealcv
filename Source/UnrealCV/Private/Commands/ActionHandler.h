@@ -8,6 +8,9 @@ class FActionHandler : public FCommandHandler
 public:
 	void RegisterCommands();
 
+	static float tick_interval;
+	static bool bTickIntervalHasValue;
+
 private:
 	/** vset /action/game/pause */
 	FExecStatus PauseGame(const TArray<FString>& Args);
@@ -33,6 +36,8 @@ private:
 	FExecStatus GarbageCollection(const TArray<FString>& Args);
 
 	FExecStatus SetFixedFPS(const TArray<FString>& Args);
+
+	FExecStatus SetTickInterval(const TArray<FString>& Args);
 
 	FExecStatus Tick(const TArray<FString>& Args);
 
