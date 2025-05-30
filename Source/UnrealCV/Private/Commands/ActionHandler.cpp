@@ -6,14 +6,11 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Runtime/Engine/Classes/GameFramework/Pawn.h"
 
-#include "Kismet2/DebuggerCommands.h"
-#include "Kismet2/KismetDebugUtilities.h"
-#include "UnrealEd.h"
-#include "Framework/Application/SlateApplication.h"
-
 #include "WorldController.h"
 #include "VisionBPLib.h"
 
+
+#if WITH_EDITOR
 void FActionHandler::RegisterCommands()
 {
 	FDispatcherDelegate Cmd;
@@ -78,6 +75,66 @@ void FActionHandler::RegisterCommands()
 		"Add a tick"
 	);
 }
+#else
+void FActionHandler::RegisterCommands()
+{
+	FDispatcherDelegate Cmd;
+	FString Help;
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::PauseGame);
+	Help = "Pause the game";
+	CommandDispatcher->BindCommand("vset /action/game/pause", Cmd, Help);
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::ResumeGame);
+	Help = "Resume the game";
+	CommandDispatcher->BindCommand("vset /action/game/resume", Cmd, Help);
+
+	CommandDispatcher->BindCommand(
+		"vget /action/game/is_paused",
+		FDispatcherDelegate::CreateRaw(this, &FActionHandler::GetIsPaused),
+		"Get the pause status"
+	);
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::OpenLevel);
+	Help = "Open level";
+	CommandDispatcher->BindCommand("vset /action/game/level [str]", Cmd, Help);
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::EnableInput);
+	Help = "Enable input";
+	CommandDispatcher->BindCommand("vset /action/input/enable", Cmd, Help);
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::DisableInput);
+	Help = "Disable input";
+	CommandDispatcher->BindCommand("vset /action/input/disable", Cmd, Help);
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetStereoDistance);
+	Help = "Set the distance of binocular stereo camera";
+	CommandDispatcher->BindCommand("vset /action/eyes_distance [float]", Cmd, Help);
+
+
+	Cmd = FDispatcherDelegate::CreateRaw(this, &FActionHandler::Keyboard);
+	Help = "Send a keyboard action to the game";
+	CommandDispatcher->BindCommand("vset /action/keyboard [str] [float]", Cmd, Help);
+
+	CommandDispatcher->BindCommand(
+		"vset /action/clean_garbage",
+		FDispatcherDelegate::CreateRaw(this, &FActionHandler::GarbageCollection),
+		"Manually collect garbage in the RAM"
+	);
+
+	CommandDispatcher->BindCommand(
+		"vset /action/set_fixed_frame_rate [float]",
+		FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetFixedFPS),
+		"Set fixed frame rate of the world"
+	);
+
+	//CommandDispatcher->BindCommand(
+	//	"vset /action/set_synchronous_mode [str]",
+	//	FDispatcherDelegate::CreateRaw(this, &FActionHandler::SetFixedFPS),
+	//	"Set synchronous mode of the environmne,t false means asynchronous"
+	//);
+}
+#endif // WITH_EDITOR
 
 FExecStatus FActionHandler::PauseGame(const TArray<FString>& Args)
 {
@@ -252,6 +309,13 @@ FExecStatus FActionHandler::SetFixedFPS(const TArray<FString>& Args)
 //	}
 //}
 
+
+#if WITH_EDITOR
+#include "Kismet2/DebuggerCommands.h"
+#include "Kismet2/KismetDebugUtilities.h"
+#include "UnrealEd.h"
+#include "Framework/Application/SlateApplication.h"
+
 FExecStatus FActionHandler::Tick(const TArray<FString>& Args)
 {
 	if (GIntraFrameDebuggingGameThread && FKismetDebugUtilities::GetCurrentDebuggingWorld() == nullptr)
@@ -279,3 +343,5 @@ FExecStatus FActionHandler::Tick(const TArray<FString>& Args)
 
 	return FExecStatus::OK();
 }
+
+#endif // WITH_EDITOR
